@@ -1,0 +1,46 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-std-time-parsers
+  milestone: 0002-tdx-protocol
+status: planned
+summary: 'Implement time-series parsers: minute, transaction, xdxr, finance, company info, block'
+details: |
+  mootdx-ts/src/protocol/minute_time.ts:
+    - get_minute_time_data(market, code): intraday minute data
+    - get_history_minute_time_data(market, code, date): historical minute
+    Returns: MinuteData[]
+    Reference: pytdx/parser/get_minute_time_data.py, get_history_minute_time_data.py
+
+  mootdx-ts/src/protocol/transaction.ts:
+    - get_transaction_data(market, code, start, count): intraday tick data
+    - get_history_transaction_data(market, code, start, count, date): historical tick
+    Returns: Transaction[]
+    Reference: pytdx/parser/get_transaction_data.py, get_history_transaction_data.py
+
+  mootdx-ts/src/protocol/xdxr.ts:
+    - get_xdxr_info(market, code): ex-rights/ex-dividend data
+    Returns: XdxrRecord[]
+    Reference: pytdx/parser/get_xdxr_info.py
+
+  mootdx-ts/src/protocol/finance.ts:
+    - get_finance_info(market, code): financial summary
+    Returns: FinanceInfo
+    Reference: pytdx/parser/get_finance_info.py
+
+  mootdx-ts/src/protocol/company_info.ts:
+    - get_company_info_category(market, code): F10 category listing
+    - get_company_info_content(market, code, filename, start, length): F10 content
+    Reference: pytdx/parser/get_company_info_category.py, get_company_info_content.py
+
+  mootdx-ts/src/protocol/block.ts:
+    - get_and_parse_block_info(tofile): sector/block definitions
+    Reference: pytdx/parser/get_and_parse_block_info.py
+
+  mootdx-ts/src/protocol/report_file.ts:
+    - get_report_file_by_size(market, code, offset, size): raw file data for financial downloads
+    Reference: pytdx/parser/get_report_file_by_size.py
+depends_on:
+  - implement-login-heartbeat

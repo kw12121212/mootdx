@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-socket-and-base-protocol
+  status: proposed
+summary:
+  what:
+    - Implement TdxSocket TCP client class and TdxBaseApi base protocol handler with packet framing, header parsing, and zlib decompression
+  why:
+    - Core transport layer needed by all TDX protocol parsers (login, heartbeat, K-line, quotes, etc.)
+scope:
+  in:
+    - mootdx-ts/src/protocol/socket.ts (TdxSocket), mootdx-ts/src/protocol/base.ts (TdxBaseApi)
+  out:
+    - TCP connection management, binary request/response framing, multi-packet accumulation, zlib decompression
+unchanged_behavior:
+  - All existing Python codebase, all existing mootdx-ts/src modules (types, consts, exceptions, logger, config, utils, cache, protocol/helpers.ts)
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-socket-and-base-protocol

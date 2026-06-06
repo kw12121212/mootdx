@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: port-config-module
+approach:
+  - Port config.py to idiomatic TypeScript using Bun.file() for async JSON I/O. Store config as a mutable object with CONFIG default. get() supports dot-notation keys. setup() loads from file, creates default if missing. Exports individual functions and a getConfig() accessor.
+decisions:
+  sync-config:
+    decision: Use synchronous config access with lazy file loading rather than fully async
+    rationale: Python original uses module-level mutable state with lazy setup. Matching this pattern keeps the port faithful and avoids async complexity in callers.
+alternatives: []
+risks: []

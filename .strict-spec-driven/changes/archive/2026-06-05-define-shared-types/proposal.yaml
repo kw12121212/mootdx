@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: define-shared-types
+  status: proposed
+summary:
+  what:
+    - Define all shared TypeScript interfaces (OhlcBar, Quote, XdxrRecord, FinanceInfo, MinuteData, Transaction, SecurityInfo, BlockInfo, FactorRecord, FinancialFile, QuoteLevel) and enums (Market, Frequency) in mootdx-ts/src/types.ts, re-exported from src/index.ts
+  why:
+    - All subsequent modules (protocol, quotes, reader, affair, tools) depend on shared type definitions
+scope:
+  in:
+    - mootdx-ts/src/types.ts (new file), mootdx-ts/src/index.ts (update re-exports)
+  out:
+    - Runtime logic, protocol implementation, network I/O, CLI commands
+unchanged_behavior:
+  - All existing Python codebase and specs remain untouched; mootdx-ts/src/index.ts currently exports empty
+roadmap:
+  milestone: 0001-project-scaffold
+  planned_change: define-shared-types

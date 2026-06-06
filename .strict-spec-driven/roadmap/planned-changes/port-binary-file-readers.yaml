@@ -1,0 +1,51 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-binary-file-readers
+  milestone: 0004-reader
+status: planned
+summary: Port binary file readers (.day, .lc1, .lc5, .1, .5) and ReaderBase with path resolution
+details: |
+  mootdx-ts/src/reader.ts - Port from mootdx/reader.py.
+
+  Reader factory: reader(market: 'std'|'ext', tdxdir: string) -> StdReader | ExtReader
+
+  ReaderBase:
+    - constructor(tdxdir): validate directory exists, raise if not
+    - find_path(symbol, subdir, suffix): auto-resolve binary file path
+      - '#' in symbol -> market 'ds'
+      - '88' prefix -> market 'sh'
+      - Otherwise -> get_stock_market() returns 'sh' or 'sz'
+      - Search in vipdoc/{market}/{subdir}/{symbol}.{suffix}
+      - Returns Path | null
+
+  Binary file format readers (port from tdxpy/reader/):
+    TdxDailyBarReader (.day files):
+      - 32 bytes per record: date(U32), open(U32), high(U32), low(U32), close(U32),
+        amount(F64), vol(U32) - all raw values, divide by appropriate factor
+      - Reference: tdxpy/reader/history_data_reader.py TdxDailyBarReader
+
+    TdxLCMinBarReader (.lc1/.lc5 files):
+      - Compressed minute format with date, open, high, low, close, amount, vol
+      - Reference: tdxpy/reader/lc_min_bar_reader.py
+
+    TdxMinBarReader (.1/.5 files):
+      - Standard minute format
+      - Reference: tdxpy/reader/min_bar_reader.py
+
+  StdReader:
+    - daily(symbol): read .day file via MooTdxDailyBarReader -> OhlcBar[]
+    - minute(symbol, suffix): suffix=1 -> .lc1/.1, suffix=5 -> .lc5/.5 -> OhlcBar[]
+    - fzline(symbol): alias for minute(symbol, 5)
+
+  ExtReader:
+    - Uses TdxExHqDailyBarReader for extended market .day files
+    - daily(symbol), minute(symbol), fzline(symbol)
+
+  Reference for MooTdxDailyBarReader: mootdx/contrib/compat.py
+    - Extends base reader with security type detection (SH_A, SZ_A, SH_B, SZ_B, etc.)
+    - Applies per-type coefficient adjustments to raw values
+depends_on:
+  - port-config-utils-cache

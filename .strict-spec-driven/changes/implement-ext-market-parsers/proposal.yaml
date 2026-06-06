@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-ext-market-parsers
+  status: proposed
+summary:
+  what:
+    - 'Implement extended market (futures/commodities) protocol parsers: markets, instruments, bars, quotes, minute time, and transaction data'
+  why:
+    - Extended market support enables futures and commodity trading data access via TDX extended servers
+scope:
+  in:
+    - mootdx-ts/src/protocol/ext/
+  out:
+    - 8 parser functions for extended market data with typed return values
+unchanged_behavior:
+  - All Python codebase, existing mootdx-ts modules, std protocol parsers
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-ext-market-parsers

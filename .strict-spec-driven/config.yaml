@@ -1,0 +1,44 @@
+schema: strict-spec-driven/config/v1
+schema_version: 1
+artifact_type: workflow_config
+context: |
+  mootdx is a Python library for reading TongDaXin (通达信/TDX) stock market data.
+  It provides three main interfaces: Quotes (online real-time market data via TDX protocol),
+  Reader (offline local data files from TDX installation), and Affair (financial report downloads).
+  Tech stack: Python 3.8+, poetry for dependency management, pytest for testing, click for CLI.
+  Key dependencies: tdxpy (TDX protocol), httpx, tenacity, mini-racer (JS holiday calendar).
+  The library exposes a pandas-compatible DataFrame API. CLI entry point: mootdx command.
+rules:
+  specs:
+    - Describe observable behavior only — no implementation details, technology choices, or internal structure
+    - MUST = required with no exceptions; SHOULD = default unless explicitly justified; MAY = genuinely optional
+    - Each requirement must be independently verifiable from outside the system
+  change:
+    - Implement only what is in scope in proposal.yaml — if scope needs to expand, use strict-spec-modify first, never expand silently
+    - When a requirement or task is ambiguous, ask the user before proceeding — do not assume or guess
+    - Delta specs must reflect what was actually built, not the original plan
+    - Mark tasks done immediately upon completion — never batch at the end
+    - Every change must include test tasks (validation + unit tests at minimum)
+  code:
+    - Read existing code before modifying it
+    - Implement only what the current task requires — no speculative features
+    - No abstractions for hypothetical future needs (YAGNI)
+  test:
+    - Tests must verify observable behavior described in specs, not internal implementation details
+    - Each test must be independent — no shared mutable state between tests
+    - Prefer real dependencies over mocks for code the project owns
+review_evidence:
+  project_regression:
+    method: complete_project_regression
+    command: poetry run pytest
+    meaning: >-
+      Passing this command is required review evidence before strict-spec-review recommends archive
+      or strict-spec-auto performs archive. This command represents the complete project-level
+      regression suite, not only the Testing section tasks for an individual change.
+    unavailable_behavior: >-
+      If the command cannot run because required dependencies, services, credentials, fixtures, or
+      other test conditions are unavailable, review or auto archive is blocked until a human
+      prepares the environment or explicitly provides the missing evidence.
+# maintenance:
+#   checks:
+#     - type: roadmap-sync-check

@@ -1,0 +1,36 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-std-kline-parsers
+sections:
+  Implementation:
+    create-security-bars:
+      text: Create mootdx-ts/src/protocol/security_bars.ts with getSecurityBars parser (request builder + response parser with delta price decoding)
+      status: complete
+    create-index-bars:
+      text: Create mootdx-ts/src/protocol/index_bars.ts with getIndexBars parser (extends security_bars with upCount/downCount)
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export K-line parsers
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with unit tests for request packet building and response parsing with known binary data
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify only security_bars.ts, index_bars.ts created and index.ts updated
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-consts-exceptions-logger
+  status: proposed
+summary:
+  what:
+    - Port consts.ts (market IDs, kline types, frequency map, server hosts, block constants, limits, config defaults), exceptions.ts (MootdxError, MootdxValidationError, MootdxModuleNotFoundError, FileNeedRefresh), and logger.ts (createLogger with debug/info/warn/error levels) from Python originals
+  why:
+    - These three modules are foundational infrastructure used by all higher-level modules (protocol, quotes, reader, affair, config, utils)
+scope:
+  in:
+    - mootdx-ts/src/consts.ts, mootdx-ts/src/exceptions.ts, mootdx-ts/src/logger.ts (new files), mootdx-ts/src/index.ts (update exports)
+  out:
+    - Protocol implementation, network I/O, CLI commands, price adjustment
+unchanged_behavior:
+  - All existing Python codebase and specs remain untouched
+roadmap:
+  milestone: 0001-project-scaffold
+  planned_change: port-consts-exceptions-logger

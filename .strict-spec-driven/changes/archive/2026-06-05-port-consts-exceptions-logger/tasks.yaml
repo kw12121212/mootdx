@@ -1,0 +1,39 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-consts-exceptions-logger
+sections:
+  Implementation:
+    create-consts:
+      text: Create mootdx-ts/src/consts.ts with market IDs, kline types, frequency array, server hosts, block constants, limits, and config defaults
+      status: complete
+    create-exceptions:
+      text: Create mootdx-ts/src/exceptions.ts with MootdxError, MootdxValidationError, MootdxModuleNotFoundError, FileNeedRefresh
+      status: complete
+    create-logger:
+      text: Create mootdx-ts/src/logger.ts with createLogger(name) returning debug/info/warn/error methods
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export consts, exceptions, and logger
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with unit tests for consts values, exception hierarchy, and logger levels
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify only new .ts files created and index.ts updated; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

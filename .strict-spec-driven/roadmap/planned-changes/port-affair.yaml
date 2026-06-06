@@ -1,0 +1,34 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-affair
+  milestone: 0005-financial-affair
+status: planned
+summary: Port Affair orchestrator with async download, MD5 skip, and progress
+details: |
+  mootdx-ts/src/affair.ts - Port from mootdx/affair.py.
+
+  Affair class (all static methods):
+    files(): FinancialList.fetch_and_parse() -> FinancialFile[]
+      Returns list of available remote files with filename, hash, filesize.
+
+    fetch(downdir, filename?):
+      Single file mode: download with cli-progress bar
+      Batch mode (no filename): download all files via Promise.all with concurrency limit
+      - Auto-create downdir if not exists
+      - Skip files where MD5 matches existing file (prevents redundant downloads)
+
+    parse(downdir, filename):
+      - If filename provided: ensure file exists (download if needed)
+      - Delegate to FinancialReader.to_data(filepath)
+      - Return parsed structured data
+
+  fetchFile helper (async):
+    - Check if filepath exists and MD5 matches
+    - If match: skip with warning
+    - Otherwise: download via Financial.fetch_only()
+    Reference: mootdx/affair.py fetch_file()
+depends_on:
+  - port-financial-columns

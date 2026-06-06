@@ -1,0 +1,38 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: comprehensive-tests-and-docs
+  milestone: 0008-tests-docs
+status: planned
+summary: Write comprehensive test suite and publish documentation
+details: |
+  Test suite in mootdx-ts/tests/ using Bun test runner.
+
+  Test files:
+    tests/protocol/helpers.test.ts - getPrice/getVolume edge cases
+    tests/protocol/login.test.ts - login sequence (mock socket)
+    tests/protocol/security_bars.test.ts - K-line parser with recorded fixtures
+    tests/protocol/security_quotes.test.ts - quote parser with recorded fixtures
+    tests/protocol/minute.test.ts, transaction.test.ts, xdxr.test.ts, finance.test.ts
+    tests/reader/reader_base.test.ts - find_path() market detection
+    tests/reader/reader_std.test.ts - daily/minute with fixture binary files
+    tests/reader/reader_block.test.ts - block file parsing
+    tests/reader/reader_customize.test.ts - custom block CRUD
+    tests/utils/utils.test.ts - get_stock_market, get_frequency, md5sum
+    tests/utils/holiday.test.ts - holiday calendar
+    tests/utils/adjust.test.ts - qfq/hfq adjustment against known Python outputs
+    tests/cache/file_cache.test.ts - file cache create/read/expiry
+    tests/cache/timed_cache.test.ts - LRU cache with time expiry
+    tests/cli/cli.test.ts - command smoke tests
+
+  Fixtures: copy from Python tests/fixtures/ for binary test data.
+
+  Documentation:
+    mootdx-ts/README.md: installation, quickstart, API overview, examples
+    TSDoc on all public functions/classes
+    mootdx-ts/MIGRATION.md: guide for Python mootdx users
+  Target: 80%+ code coverage.
+depends_on:
+  - port-cli-commands

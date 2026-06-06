@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-std-kline-parsers
+  status: proposed
+summary:
+  what:
+    - 'Implement K-line parsers: get_security_bars (0x052d) and get_index_bars with delta-encoded price decoding'
+  why:
+    - K-line (candlestick) data is the most commonly used market data type for technical analysis
+scope:
+  in:
+    - mootdx-ts/src/protocol/security_bars.ts, mootdx-ts/src/protocol/index_bars.ts
+  out:
+    - getSecurityBars() and getIndexBars() functions returning typed OhlcBar arrays with delta price reconstruction
+unchanged_behavior:
+  - All Python codebase, existing modules, protocol helpers, socket, base, login, heartbeat, server
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-std-kline-parsers

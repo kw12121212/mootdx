@@ -1,0 +1,60 @@
+schema: strict-spec-driven/spec/v1
+schema_version: 1
+artifact_type: spec
+spec:
+  id: quotes-api
+  title: Online Quotes API (StdQuotes / ExtQuotes)
+  status: active
+mapping:
+  source_paths:
+    - mootdx/quotes.py
+    - mootdx/server.py
+    - mootdx/consts.py
+requirements:
+  - id: Q-001
+    statement: Quotes.factory(market='std') returns a StdQuotes instance; market='ext' returns an ExtQuotes instance.
+    severity: MUST
+
+  - id: Q-002
+    statement: StdQuotes connects to a TDX standard-market server on construction, using configured or auto-detected best IP.
+    severity: MUST
+
+  - id: Q-003
+    statement: bars() returns daily/minute K-line data as a pandas DataFrame with columns open/high/low/close/vol/amount, capped at 800 rows per call.
+    severity: MUST
+
+  - id: Q-004
+    statement: quotes() accepts a single symbol string or list and returns real-time quote data as a DataFrame.
+    severity: MUST
+
+  - id: Q-005
+    statement: index() and index_bars() return index K-line data, auto-detecting market (SH/SZ) from symbol prefix.
+    severity: MUST
+
+  - id: Q-006
+    statement: minute()/minutes() return intraday time-share data for standard market symbols; date parameter defaults to today for minute().
+    severity: MUST
+
+  - id: Q-007
+    statement: ExtQuotes methods (markets, instrument, quote, bars, minute, transaction) all retry up to 3 times with random wait on empty results or exceptions.
+    severity: MUST
+
+  - id: Q-008
+    statement: ExtQuotes.validate() parses market from symbol when formatted as "market#symbol", raising ValueError if market is empty.
+    severity: MUST
+
+  - id: Q-009
+    statement: xdxr() returns ex-rights/ex-dividend information as a DataFrame.
+    severity: MUST
+
+  - id: Q-010
+    statement: finance() returns financial summary for a given symbol as a DataFrame.
+    severity: MUST
+
+  - id: Q-011
+    statement: stock_count() and stocks() enumerate securities on SH (market=0) or SZ (market=1); stocks paginates in batches of 1000.
+    severity: MUST
+
+  - id: Q-012
+    statement: Passing an invalid market code (not 0/1/2 where applicable) raises MootdxValidationException.
+    severity: MUST

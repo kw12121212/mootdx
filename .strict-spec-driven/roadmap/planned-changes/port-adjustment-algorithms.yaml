@@ -1,0 +1,38 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-adjustment-algorithms
+  milestone: 0006-utils-adjust
+status: planned
+summary: Port price adjustment pipeline (qfq/hfq) and tools/reversion.ts
+details: |
+  mootdx-ts/src/tools/reversion.ts - Port from mootdx/tools/reversion.py (6.9KB).
+
+  Adjustment algorithms:
+    factorReversion(symbol, data, method): factor-based qfq/hfq
+      - Fetch pre-computed factors from fq_factor()
+      - Apply multiplication factor to OHLC, recalculate vol
+    _reversion(df, xdxrData): dividend/split-based adjustment
+      - Use raw xdxr records (fhps, bonus, sgs, pgjg, peigujia, songgu, zhuanzeng)
+      - Apply backwards from most recent to oldest
+    etfReversion(df, xdxrData): ETF-specific adjustment
+      - Simpler logic: only handle splits and dividends for ETFs
+    baoliQfq(df): brute-force forward adjustment
+      - Simple cumulative multiplication approach
+    reversion(df, xdxrData, adjustType): dispatcher
+      - adjustType: 'qfq' | 'hfq' | '01' | '02'
+  Reference: mootdx/tools/reversion.py
+
+  mootdx-ts/src/utils/adjust.ts - Port from mootdx/utils/adjust.py:
+    toAdjust(df, symbol, adjust): apply adjustment to DataFrame-like data
+      - Calls get_xdxr(symbol) to fetch xdxr data
+      - Calls reversion() with appropriate type
+    toAdjust2(df, symbol, adjust): alternative adjustment using factor data
+    get_xdxr(symbol): cached xdxr data fetcher
+      - Calls Quotes.factory('std').xdxr(symbol)
+      - Cached to ~/.mootdx/xdxr/{symbol}.json with file_cache
+  Reference: mootdx/utils/adjust.py
+depends_on:
+  - port-quotes-api

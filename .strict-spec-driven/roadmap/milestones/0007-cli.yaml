@@ -1,0 +1,59 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0007-cli:
+    title: CLI commands
+goal: Port all CLI commands to a TypeScript CLI using Commander.js
+scope:
+  in:
+    - Root command with version flag and verbose debug logging toggle
+    - quotes subcommand (bars, quotes, index, minute, transaction, F10, xdxr, finance, block)
+    - reader subcommand (daily, minute, fzline, block, block_new)
+    - bestip subcommand (server testing and latency display with ora spinner)
+    - affair subcommand (financial file list/download/parse with cli-progress)
+    - bundle subcommand (batch download, comma-separated symbols, export to CSV/JSON/XLSX)
+  out:
+    - Library API
+    - Protocol implementation
+    - File readers
+done_criteria:
+  - mootdx --version prints the correct version
+  - mootdx quotes -s 600036 -a bars outputs formatted K-line data
+  - mootdx reader -d /path/to/tdx -s 600036 -a daily reads local data
+  - mootdx bestip -l 5 tests top 5 servers and shows latency table
+  - mootdx affair -l lists available financial files
+  - mootdx bundle batch exports data with --symbol comma-separated list
+  - '--verbose flag enables debug logging throughout'
+planned_changes: {}
+dependencies:
+  - 0003-core-quotes
+  - 0004-reader
+  - 0005-financial-affair
+  - 0006-utils-adjust
+risks:
+  - CLI UX should match Python version for existing users
+  - Export formats need file-writing support (CSV, JSON, XLSX)
+status: proposed
+notes:
+  - Consider publishing as npx-runnable tool for easy ad-hoc usage
+  - 'Register bin in package.json: bin.mootdx -> ./dist/cli/index.js'
+  - 'Use #!/usr/bin/env node shebang'
+details: |
+  Port __main__.py to mootdx-ts/src/cli/ using Commander.js.
+
+  Commands:
+  1. entry (root): --version, --help, --verbose (sets MOOTDX_LOG_LEVEL=debug)
+  2. quotes: --output, --symbol (default 600000), --action (default bars), --market (default std)
+     Actions: bars, index, quotes, minute, transaction, F10, xdxr, finance, block
+  3. reader: --tdxdir, --symbol, --action (default daily), --market (default std), --output
+     Actions: daily, minute, fzline, block, block_new
+  4. bestip: --limit (default 5), --verbose
+     Async server testing, ora spinner during test, cli-table3 for latency results
+  5. affair: --parse, --fetch, --downall, --output, --downdir (default output), --listfile, --verbose
+     cli-progress for download progress bars
+  6. bundle: --output (default bundle), --symbol (comma-separated), --action, --market, --extension (default csv)
+     Iterates over symbol list, exports via to_file()
+
+  Libraries: cli-table3 (tables), cli-progress (downloads), ora (spinners)

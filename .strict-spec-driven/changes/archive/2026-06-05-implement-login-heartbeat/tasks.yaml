@@ -1,0 +1,39 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-login-heartbeat
+sections:
+  Implementation:
+    create-login:
+      text: Create mootdx-ts/src/protocol/login.ts with setup commands (SetupCmd1/2/3 hex packets)
+      status: complete
+    create-heartbeat:
+      text: Create mootdx-ts/src/protocol/heartbeat.ts with HeartbeatManager (setInterval, start/stop lifecycle)
+      status: complete
+    create-server:
+      text: Create mootdx-ts/src/server.ts with connect (TCP ping), server (test hosts), bestip (save config)
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export login, heartbeat, server modules
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with unit tests for setup commands (packet hex), HeartbeatManager (start/stop), server tester (connect mock)
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify only login.ts, heartbeat.ts, server.ts created and index.ts updated; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

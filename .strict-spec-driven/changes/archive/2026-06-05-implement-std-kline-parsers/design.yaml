@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: implement-std-kline-parsers
+approach:
+  - Port both parsers as standalone functions that take TdxBaseApi + params and return typed arrays. Shared price reconstruction logic via calPrice1000 helper. Index bars adds upCount/downCount fields.
+decisions:
+  shared-request-format:
+    decision: Both parsers use identical request packet format, only response parsing differs
+    rationale: Python uses identical setParams() for both; only parseResponse differs by 4 bytes for index bars. Sharing request builder avoids duplication.
+alternatives: []
+risks: []

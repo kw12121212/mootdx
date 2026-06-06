@@ -1,0 +1,66 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0005-financial-affair:
+    title: Financial data download and parse (Affair)
+goal: Port financial report file listing, download, and binary parsing
+scope:
+  in:
+    - 'FinancialList: fetch remote file listing via TDX protocol'
+    - 'Financial: download individual files with progress and MD5 verification'
+    - 'FinancialReader: parse binary .dat files using 583-column layout'
+    - 'columns.ts: 583 Chinese column name definitions'
+    - Affair orchestrator (files, fetch, parse)
+  out:
+    - Real-time quotes API
+    - Offline file readers (covered in 0004)
+    - CLI commands
+done_criteria:
+  - Affair.files() returns list of available financial files with hash/filesize
+  - Affair.fetch(downdir, filename) downloads single file with progress bar
+  - Affair.fetch(downdir) downloads all files async, skipping MD5-matched existing files
+  - Affair.parse(downdir, filename) downloads and parses into structured data
+  - FinancialReader correctly decodes 583-column binary format
+  - MD5 skip logic prevents redundant downloads
+planned_changes: {}
+dependencies:
+  - 0002-tdx-protocol
+risks:
+  - Financial binary format uses 583 columns with complex struct layout
+  - FinancialList and Financial both need live TdxHq_API connection (report_file_by_size)
+status: proposed
+notes:
+  - Requires protocol engine because FinancialList.content() calls TdxHq_API.get_report_file_by_size()
+  - Use Promise.all with concurrency limit instead of Python asyncio
+  - auto-create downdir if it does not exist
+details: |
+  Port affair.py and financial/ subpackage.
+
+  Financial module structure (from mootdx/financial/):
+    base.ts - BaseReader with struct unpacking helpers
+    columns.ts - 583 Chinese column name constants (port from columns.py)
+    financial.ts - Three classes:
+      - FinancialList: connects to TDX server, fetches file listing,
+        parses response into [{filename, hash, filesize}] array.
+        Reference: mootdx/financial/financial.py FinancialList class
+      - Financial: downloads individual .zip/.dat files via
+        TdxHq_API.get_report_file_by_size(), extracts, parses binary.
+        Reference: mootdx/financial/financial.py Financial class
+      - FinancialReader: reads .dat binary files using struct.unpack
+        with the 583-column layout from columns.ts.
+        Reference: mootdx/financial/financial.py FinancialReader.to_data()
+
+  Affair class (from mootdx/affair.py):
+    - files(): delegates to FinancialList.fetch_and_parse()
+    - fetch(downdir, filename?): single file download with TqdmUpTo progress,
+      or batch async download using Promise.all
+    - parse(downdir, filename): ensures file exists (downloads if needed),
+      then delegates to FinancialReader.to_data()
+    - fetch_file() helper: checks MD5 of existing file, skips if match
+
+  583-column binary format:
+    Each record has a fixed header followed by 583 fields of varying types.
+    Field types: int32, float64, string (GBK encoded).
+    Column names from columns.ts provide the mapping.

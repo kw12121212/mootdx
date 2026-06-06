@@ -1,0 +1,69 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0001-project-scaffold:
+    title: Project scaffold, types, and base modules
+goal: Bootstrap the TypeScript/Bun project in mootdx-ts/ directory with shared types, constants, exceptions, logger, config, and core utils
+scope:
+  in:
+    - Initialize Bun project in mootdx-ts/ with TypeScript strict mode
+    - Set up package.json with dual ESM/CJS exports via bunup
+    - Configure Bun test runner and biome linter
+    - Define all shared TypeScript interfaces (OhlcBar, Quote, XdxrRecord, etc.) in types.ts
+    - Port constants, exceptions, logger, config modules
+    - Port core utils (get_stock_market, get_frequency, md5sum, get_config_path, to_file)
+    - Port file-based and in-memory caching
+  out:
+    - Protocol implementation
+    - Any network-dependent business logic
+    - CLI commands
+    - Price adjustment algorithms
+done_criteria:
+  - bun install && bun run build succeeds in mootdx-ts/
+  - bun test passes with a smoke test
+  - All constants from consts.ts match Python originals
+  - Config module reads/writes JSON at ~/.mootdx/config.json
+  - Logger outputs to console with configurable levels
+  - Shared types (OhlcBar, Quote, XdxrRecord, etc.) defined and exported
+  - 'Core utils tested: get_stock_market, get_frequency, md5sum'
+  - File cache and LRU cache working with expiry
+planned_changes: {}
+dependencies: []
+risks:
+  - Bunup or chosen build tool may need configuration tuning for dual-format output
+status: complete
+notes:
+  - All new TypeScript code lives in mootdx-ts/ directory at project root, NOT mixed with Python
+  - Reference nodetdx (github.com/hitrading/nodetdx) as the closest existing JS implementation
+  - demjson.py is NOT ported - native JSON.parse() handles all equivalent functionality
+details: |
+  This is the foundation milestone. Everything else depends on it.
+
+  IMPORTANT: All new TypeScript code goes in mootdx-ts/ directory at the project root.
+  The Python codebase remains untouched. Directory structure:
+
+  mootdx-ts/
+    package.json
+    tsconfig.json
+    biome.json
+    bunup.config.ts
+    src/
+      index.ts          # Package entry, re-exports public API
+      types.ts          # Shared interfaces (OhlcBar, Quote, XdxrRecord, etc.)
+      consts.ts         # Market IDs, K-line types, server lists, frequency map
+      exceptions.ts     # Custom error classes
+      logger.ts         # Console logger with level control
+      config.ts         # JSON config file management (~/.mootdx/config.json)
+      protocol/         # TDX binary protocol implementation
+      utils/            # Shared utility functions
+      contrib/          # Third-party data integration
+      financial/        # Financial report download and parsing
+      tools/            # Data conversion and adjustment tools
+      cache/            # Caching decorators
+      cli/              # CLI entry point and subcommands
+    tests/              # Test files mirroring src/ structure
+
+  Dependencies: p-retry, commander, cli-progress, iconv-lite
+  DevDependencies: @types/node, bunup, biome

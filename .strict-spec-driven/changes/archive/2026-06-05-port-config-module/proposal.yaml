@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-config-module
+  status: proposed
+summary:
+  what:
+    - 'Port config module to mootdx-ts/src/config.ts: JSON file-based config at ~/.mootdx/config.json with get(dot-notation key), set(key, value), has(key, value), clone(), update(options), setup() functions. Config schema: SERVER/BESTIP/TDXDIR.'
+  why:
+    - Config module is needed by server selection (bestip), reader, and other modules that read user preferences
+scope:
+  in:
+    - mootdx-ts/src/config.ts (new file), mootdx-ts/src/index.ts (update exports)
+  out:
+    - Server auto-selection/bestip, network I/O, CLI commands
+unchanged_behavior:
+  - All existing Python codebase and specs remain untouched
+roadmap:
+  milestone: 0001-project-scaffold
+  planned_change: port-config-module

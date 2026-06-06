@@ -1,0 +1,29 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-std-quote-parsers
+  milestone: 0002-tdx-protocol
+status: planned
+summary: 'Implement real-time parsers: get_security_quotes (0x053e) and market enumeration'
+details: |
+  mootdx-ts/src/protocol/security_quotes.ts:
+    Request: header + cmd_word(0x053e) + stock_count(U16) + per-stock: market(U8) + code(6-byte ASCII)
+    Response: per-stock 5-level quote data with getPrice() for price fields (relative to current price / 100)
+    Returns: Quote[]
+    Reference: pytdx/parser/get_security_quotes.py
+
+  mootdx-ts/src/protocol/security_count.ts:
+    Request: cmd 0x044e + market(U16)
+    Response: count(U16)
+    Returns: number
+    Reference: pytdx/parser/get_security_count.py
+
+  mootdx-ts/src/protocol/security_list.ts:
+    Request: cmd 0x0450 + market(U16) + start(U16)
+    Response: per-stock: code(6-byte) + vol(U16) + name(GBK string)
+    Returns: SecurityInfo[]
+    Reference: pytdx/parser/get_security_list.py
+depends_on:
+  - implement-login-heartbeat

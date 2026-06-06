@@ -1,0 +1,38 @@
+schema: strict-spec-driven/spec/v1
+schema_version: 1
+artifact_type: spec
+spec:
+  id: reader-api
+  title: Offline Reader API (StdReader / ExtReader)
+  status: active
+mapping:
+  source_paths:
+    - mootdx/reader.py
+requirements:
+  - id: R-001
+    statement: Reader.factory(market='std') returns StdReader; market='ext' returns ExtReader.
+    severity: MUST
+
+  - id: R-002
+    statement: Constructor requires a valid tdxdir path; raises Exception if the directory does not exist.
+    severity: MUST
+
+  - id: R-003
+    statement: StdReader.daily(symbol) reads .day files from vipdoc/{market}/lday/ and returns a pandas DataFrame.
+    severity: MUST
+
+  - id: R-004
+    statement: StdReader.minute(symbol, suffix=1) reads 1-minute .lc1/.1 files; suffix=5 reads 5-minute .lc5/.5 files from vipdoc/{market}/minline or fzline.
+    severity: MUST
+
+  - id: R-005
+    statement: find_path auto-detects market (sh/sz) from symbol prefix; symbols starting with '88' map to sh; '#' prefix maps to ds (extended).
+    severity: MUST
+
+  - id: R-006
+    statement: ExtReader.daily/minute/fzline read extended-market data files using TdxExHqDailyBarReader.
+    severity: MUST
+
+  - id: R-007
+    statement: All reader methods return None when the data file is not found.
+    severity: MUST

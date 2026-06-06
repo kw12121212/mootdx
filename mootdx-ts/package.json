@@ -1,0 +1,33 @@
+{
+  "name": "mootdx",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "mootdx": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "bunup",
+    "test": "bun test",
+    "lint": "biome check ./src"
+  },
+  "dependencies": {
+    "p-retry": "^6.2.0",
+    "commander": "^13.1.0",
+    "cli-progress": "^3.12.0",
+    "iconv-lite": "^0.6.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^22.0.0",
+    "biome": "^0.3.0",
+    "bunup": "^0.16.31",
+    "typescript": "^5.9.0"
+  }
+}

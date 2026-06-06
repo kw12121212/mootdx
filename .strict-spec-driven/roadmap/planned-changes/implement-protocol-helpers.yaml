@@ -1,0 +1,29 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-protocol-helpers
+  milestone: 0002-tdx-protocol
+status: complete
+summary: Implement variable-length integer encoding (get_price, get_volume) and binary helpers
+details: |
+  Port pytdx/helper.py -> mootdx-ts/src/protocol/helpers.ts.
+
+  getPrice(buf: Buffer, offset: number) -> { value: number; bytesRead: number }:
+    Custom variable-length signed integer encoding:
+    - Byte 0: bit 7 = continuation, bit 6 = sign, bits 0-5 = data (6 bits)
+    - Byte 1+: bit 7 = continuation, bits 0-6 = data, shift by 6 for byte 1, 7+6=13 for byte 2, etc.
+    - If sign bit set, negate result
+
+  getVolume(raw: number) -> number:
+    Logarithmic float reconstruction from packed int32.
+    Extracts mantissa and exponent from bit fields.
+
+  Also port getDatetime(buf, offset) for K-line timestamp parsing:
+    - Variable-length date encoding used in get_security_bars, get_index_bars
+
+  Reference: github.com/rainx/pytdx/blob/master/pytdx/helper.py
+  Test vectors: edge cases for 0, -1, large positive, large negative, single-byte, max-bytes.
+depends_on:
+  - scaffold-bun-project

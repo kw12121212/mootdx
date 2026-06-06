@@ -1,0 +1,36 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-socket-and-base-protocol
+sections:
+  Implementation:
+    create-socket:
+      text: Create mootdx-ts/src/protocol/socket.ts with TdxSocket class (connect, disconnect, send, receive)
+      status: complete
+    create-base:
+      text: Create mootdx-ts/src/protocol/base.ts with TdxBaseApi class (sendRequest, header pack/unpack, zlib decompress, multi-packet)
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export socket and base protocol classes
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with unit tests for TdxSocket (mock connect/disconnect/send/receive), TdxBaseApi (header pack/unpack, zlib decompress)
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify only socket.ts, base.ts created and index.ts updated; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

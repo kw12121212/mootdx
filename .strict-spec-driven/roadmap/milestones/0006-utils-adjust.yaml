@@ -1,0 +1,86 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0006-utils-adjust:
+    title: Price adjustment, factor data, holiday calendar, and data tools
+goal: Port price adjustment algorithms (qfq/hfq), factor data fetching, holiday calendar, and data conversion tools
+scope:
+  in:
+    - to_data() converter with adjust parameter dispatch
+    - Price adjustment (qfq forward and hfq backward) from utils/adjust.py and tools/reversion.py
+    - Factor data fetching from Sina Finance API (utils/factor.py)
+    - Holiday calendar from Sina/TDX with native JS execution (utils/holiday.py)
+    - Third-party adjustment data from TongHuaShun (contrib/adjust.py)
+    - TDX text export to CSV conversion (tools/tdx2csv.ts)
+    - Batch financial downloader (tools/DownloadTDXCaiWu.ts)
+  out:
+    - Protocol implementation
+    - Core utils (get_stock_market etc., already in 0001)
+    - Caching (already in 0001)
+    - CLI commands
+done_criteria:
+  - to_data() applies qfq/hfq adjustment when adjust param is set
+  - qfq/hfq adjustment produces same results as Python version for known test cases
+  - Holiday calendar returns correct Chinese trading holidays
+  - Factor data fetches and caches from Sina Finance
+  - contrib/adjust.ts fetches data from TongHuaShun
+  - tdx2csv converts TDX text exports to CSV
+  - DownloadTDXCaiWu batch downloads with thread-pool parallelism
+planned_changes: {}
+dependencies:
+  - 0003-core-quotes
+risks:
+  - holiday.js decryption runs natively in TS - strictly simpler than Python (no mini_racer)
+  - Sina Finance factor data API may change; cache layer mitigates this
+  - Adjustment algorithms have edge cases around dividend dates and split ratios
+  - DownloadTDXCaiWu uses requests library in Python; port to fetch/httpx equivalent
+status: proposed
+notes:
+  - holiday.js runs natively in TS - no mini_racer needed
+  - This milestone depends on 0003 because adjustment pipeline calls Quotes.xdxr()
+details: |
+  Port utils/adjust.py, utils/factor.py, utils/holiday.py, contrib/adjust.py,
+  tools/reversion.py, tools/tdx2csv.py, tools/DownloadTDXCaiWu.py.
+
+  Adjustment pipeline call graph:
+    to_data(raw, {adjust}) -> to_adjust(df, symbol, adjust) -> get_xdxr(symbol)
+      -> Quotes.factory('std').xdxr(symbol) -> reversion(df, xdxr_data, adjust_type)
+        -> factor_reversion(df, factor_data) [factor-based]
+        OR _reversion(df, xdxr_data) [dividend/split-based]
+        OR etf_reversion(df, xdxr_data) [ETF-specific]
+
+  Adjustment algorithms (tools/reversion.py):
+    - factor_reversion(symbol, data, method): uses pre-computed Sina factors
+    - _reversion(df, xdxr_data): uses raw dividend/split/rights data
+    - etf_reversion(df, xdxr_data): ETF-specific adjustment logic
+    - baoli_qfq(df): brute-force forward adjustment
+    - reversion(df, xdxr_data, adjust_type): dispatcher
+
+  Factor data (utils/factor.py):
+    - fq_factor(symbol, method): fetch qfq/hfq factors from Sina Finance API
+    - URL pattern: https://finance.sina.com.cn/realstock/company/{symbol}/nc.shtml
+    - Cached to ~/.mootdx/caches/factor/ with file_cache decorator
+
+  Holiday calendar (utils/holiday.py):
+    - holidays(): fetch from Sina, decrypt with native JS (no mini_racer!)
+    - holiday(date): check if date is trading holiday
+    - holiday2(date): fetch from tdx.com.cn
+    - holiday.js already JS - import directly, eliminate mini_racer entirely
+
+  Third-party adjustment (contrib/adjust.py):
+    - get_adjust_year(symbol, year, factor): fetch from 10jqka (TongHuaShun)
+    - Uses httpx to fetch https://d.10jqka.com.cn/v6/line/hs_{symbol}/01/{year}.js
+    - Parses response with regex to extract date/OHLCV/adjust columns
+
+  TDX text to CSV (tools/tdx2csv.py):
+    - txt2csv(filepath): convert TDX exported .txt to .csv via pandas
+    - batch(): async batch conversion with Promise.all
+
+  Batch financial downloader (tools/DownloadTDXCaiWu.py):
+    - DownloadTDXCaiWu class: download from data.tdx.com.cn
+    - MD5 checksums for verification
+    - Thread pool parallelism -> use Promise.all with concurrency limit in TS
+    - Auto-sync to TDX installation directory
+    - Port uses Bun.fetch() instead of Python requests library

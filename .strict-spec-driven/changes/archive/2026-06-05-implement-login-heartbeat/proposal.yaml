@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-login-heartbeat
+  status: proposed
+summary:
+  what:
+    - Implement login/setup commands (SetupCmd1/2/3), heartbeat manager, and server tester with latency measurement
+  why:
+    - Login sequence is required before any API calls; heartbeat keeps connections alive; server tester finds fastest servers
+scope:
+  in:
+    - mootdx-ts/src/protocol/login.ts, mootdx-ts/src/protocol/heartbeat.ts, mootdx-ts/src/server.ts
+  out:
+    - Setup command packets, periodic heartbeat via setInterval, TCP ping latency tester, bestip config writer
+unchanged_behavior:
+  - All Python codebase, existing mootdx-ts modules (types, consts, exceptions, logger, config, utils, cache, protocol/helpers.ts, protocol/socket.ts, protocol/base.ts)
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-login-heartbeat

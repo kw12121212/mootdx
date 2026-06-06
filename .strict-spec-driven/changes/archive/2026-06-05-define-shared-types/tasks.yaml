@@ -1,0 +1,36 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: define-shared-types
+sections:
+  Implementation:
+    create-types-file:
+      text: Create mootdx-ts/src/types.ts with all interfaces (OhlcBar, QuoteLevel, Quote, XdxrRecord, FinanceInfo, MinuteData, Transaction, SecurityInfo, BlockInfo, FactorRecord, FinancialFile, CompanyInfoCategory) and enums (Market, Frequency)
+      status: complete
+    update-index-exports:
+      text: Update mootdx-ts/src/index.ts to re-export all types from types.ts
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds with types included
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes with no errors
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with type guard tests for key interfaces
+      status: complete
+      command: cd mootdx-ts && bun test
+    validate-type-exports:
+      text: Verify dist output includes types (d.ts) and all interfaces are accessible from package entry
+      status: complete
+  Verification:
+    verify-scope:
+      text: Verify only types.ts was created and index.ts updated; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: implement-ext-market-parsers
+approach:
+  - Create protocol/ext/ directory with separate files for each parser. Each exports a request builder and response parser. Share common patterns via getPrice/getDatetime helpers.
+decisions:
+  separate-dir:
+    decision: Use protocol/ext/ subdirectory to keep extended market code separate from standard parsers
+    rationale: Extended market uses different servers, setup commands, and response formats. Separation keeps code organized.
+alternatives: []
+risks: []

@@ -1,0 +1,16 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-config-module
+  milestone: 0001-project-scaffold
+status: complete
+summary: Port config.ts - JSON file config management at ~/.mootdx/config.json
+details: |
+  Port mootdx/config.py. Uses ~/.mootdx/config.json for persistent settings.
+  Functions: setup(), get(key, default?), set(key, value), has(key, value),
+  path(key, value?), clone(), update(options).
+  Config schema: { SERVER: { HQ, EX, GP }, BESTIP: { HQ, EX, GP }, TDXDIR }.
+depends_on:
+  - port-consts-exceptions-logger

@@ -1,0 +1,32 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-socket-and-base-protocol
+  milestone: 0002-tdx-protocol
+status: complete
+summary: Implement TCP socket client, packet framing, header parsing, zlib decompression
+details: |
+  mootdx-ts/src/protocol/socket.ts - TdxSocket class:
+    - connect(host: string, port: number, timeout?: number): Promise<void>
+      Use Bun.connect() with { socket } or Node.js net.createConnection
+    - disconnect(): void
+    - send(data: Buffer): void - write to socket
+    - receive(expectedLen?: number): Promise<Buffer> - read until expectedLen bytes
+    - Properties: connected, host, port
+    - Auto-reconnect: on 'close' event, attempt reconnect with exponential backoff
+
+  mootdx-ts/src/protocol/base.ts - TdxBaseApi class:
+    - sendRequest(cmd: number, params: Buffer): Promise<Buffer>
+      1. Pack request header: magic(0x10c U16LE) + cmd_id(U32LE) + data_len(U16LE) x2
+      2. Send header + params
+      3. Read response header (16 bytes fixed)
+      4. Parse: seq_no(U16) + cmd(U16) + pkg_type(U16) + zip_size(U16) + unzip_size(U32)
+      5. If zip_size < unzip_size: decompress body with zlib.inflateSync
+      6. If multi-packet (pkg_type indicates more data): accumulate all packets
+      7. Return concatenated data buffer (without headers)
+
+  Reference: pytdx/parser/base.py (connect, send, recv, unpack_header)
+depends_on:
+  - implement-protocol-helpers

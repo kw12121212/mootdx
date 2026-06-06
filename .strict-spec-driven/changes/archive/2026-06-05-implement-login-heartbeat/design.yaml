@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: implement-login-heartbeat
+approach:
+  - Port SetupCmd1/2/3 as static hex packet senders extending BaseParser pattern. Create HeartbeatManager using setInterval that calls a heartbeat callback every 10s. Create server.ts with connect (raw TCP ping), server (test all hosts, sort by latency), and bestip (save to config).
+decisions:
+  use-setinterval:
+    decision: Use setInterval for heartbeat instead of a dedicated thread
+    rationale: JavaScript is single-threaded; setInterval is the natural equivalent of Python's threading.Timer/Thread for periodic tasks
+alternatives: []
+risks: []

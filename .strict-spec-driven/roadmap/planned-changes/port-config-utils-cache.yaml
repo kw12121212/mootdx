@@ -1,0 +1,47 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-config-utils-cache
+  milestone: 0001-project-scaffold
+status: complete
+summary: Port config.ts, core utils (get_stock_market, get_frequency, md5sum, to_file), and caching
+details: |
+  Port config module -> mootdx-ts/src/config.ts:
+    - setup(): load ~/.mootdx/config.json, create with defaults from consts.CONFIG if missing
+    - get(key: string, default?): dot-notation access ('SERVER.HQ')
+    - set(key: string, value: unknown): set and persist to disk
+    - has(key: string, value: unknown): check existence
+    - clone(): deep copy of settings
+    - update(options: Record<string, unknown>): merge into settings
+    Reference: mootdx/config.py
+
+  Port core utils -> mootdx-ts/src/utils/index.ts:
+    - get_stock_market(symbol: string, string?: boolean): number | string
+      Rules: 6xxxxx->SH(1), 0xxxxx->SZ(0), 3xxxxx->SZ(0), 300xxx->SZ(0),
+      002xxx->SZ(0), 68xxxx->SH(1), 8xxxxx->BJ(2), 4xxxxx->BJ(2)
+    - get_stock_markets(symbols: string[]): [number, string][]
+    - get_frequency(freq: string | number): number
+    - md5sum(filepath: string): Promise<string> (use Node.js crypto.createHash)
+    - get_config_path(name: string): string (resolves to ~/.mootdx/<name>)
+    - to_file(data: unknown[], filename: string): void (CSV via papaparse, JSON, XLSX)
+    - stock_bj_a(): Promise<SecurityInfo[]> (fetch from EastMoney API)
+    Reference: mootdx/utils/__init__.py
+
+  Port file cache -> mootdx-ts/src/cache/file.ts:
+    - fileCache(filepath: string, refreshSeconds: number): decorator
+    - Uses JSON files instead of Python pickle
+    - Raises FileNeedRefresh when expired
+    Reference: mootdx/cache/file.py
+
+  Port timed cache -> mootdx-ts/src/cache/timed.ts:
+    - lruCache(seconds: number, maxSize?: number): decorator
+    - In-memory Map with timestamp expiry
+    Reference: mootdx/cache/timed.ts
+
+  Port timer -> mootdx-ts/src/cache/timer.ts:
+    - timeit(): decorator logging execution time
+    Reference: mootdx/cache/timer.py
+depends_on:
+  - port-consts-exceptions-logger

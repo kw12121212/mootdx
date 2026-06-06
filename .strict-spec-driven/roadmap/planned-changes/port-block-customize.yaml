@@ -1,0 +1,36 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-block-customize
+  milestone: 0004-reader
+status: planned
+summary: Port block parser (BaseParse) and custom block management (Customize)
+details: |
+  mootdx-ts/src/parse.ts - Port from mootdx/parse.py:
+    BaseParse(tdxdir):
+    - parse(symbol, group?): read block files (block_zs.dat, block_fg.dat, block_gn.dat)
+    - read_text(symbol): read text-format block data
+    - __incon(): read incon.dat (index constituent data)
+    - cfg(): read cfg format block definitions
+    - Uses tdxpy.reader.BlockReader for binary block parsing
+    Reference: mootdx/parse.py
+
+  mootdx-ts/src/tools/customize.ts - Port from mootdx/tools/customize.py:
+    Customize(tdxdir):
+    - create(name, symbol): write .blk file in T0002/blocknew/, update blocknew.cfg
+    - update(name, symbol): modify existing .blk file content
+    - search(name, group?): find block by name, optional group-based parsing
+    - remove(name): delete .blk file, clean blocknew.cfg entries
+    Reference: mootdx/tools/customize.py
+
+  Block binary format: uses CustomerBlockReader from tdxpy
+    - Header with block count, then per-block: code list with stock codes
+    Reference: tdxpy/reader/customer_block_reader.py
+
+  StdReader additions:
+    - block(symbol, group): delegate to BaseParse.parse()
+    - block_new(name, symbol, group): delegate to Customize.create/search
+depends_on:
+  - port-binary-file-readers

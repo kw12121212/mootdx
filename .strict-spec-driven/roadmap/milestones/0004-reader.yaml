@@ -1,0 +1,78 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0004-reader:
+    title: Offline Reader (StdReader + ExtReader)
+goal: Port offline binary file readers with all supported formats
+scope:
+  in:
+    - Reader factory + ReaderBase with path resolution logic
+    - StdReader (daily, minute, fzline, block, block_new)
+    - ExtReader (daily, minute, fzline)
+    - Binary file format parsers (.day, .lc1, .lc5, .dat, .blk)
+    - Block parser (BaseParse) for incon.dat, cfg, block files
+    - Custom block management (Customize class from tools/customize.py)
+    - contrib/compat.ts (MooTdxDailyBarReader with security type detection)
+  out:
+    - Real-time quotes API
+    - Financial data download (needs live protocol)
+    - CLI commands
+done_criteria:
+  - StdReader.daily() reads .day binary files and returns OhlcBar[]
+  - StdReader.minute() reads both .lc1/.1 and .lc5/.5 formats
+  - find_path() auto-detects market from symbol prefix correctly
+  - Block parser reads block_zs.dat, block_fg.dat, block_gn.dat
+  - BaseParse reads incon.dat and cfg files
+  - Customize create/update/search/remove works on .blk files
+  - MooTdxDailyBarReader handles security type coefficients correctly
+planned_changes: {}
+dependencies:
+  - 0001-project-scaffold
+risks:
+  - Binary file format parsing must exactly match tdxpy struct sizes and alignment
+  - Custom block (.blk) file format is undocumented; must port from tdxpy CustomerBlockReader
+  - MooTdxDailyBarReader in contrib/compat.py has security type coefficient mapping
+status: proposed
+notes:
+  - Reader does NOT depend on protocol engine - pure binary file parsing
+  - Reuse existing tests/fixtures/ directory for binary test data
+  - Use Bun.file() for streaming and fs.readFileSync for flexibility
+details: |
+  Port reader.py, parse.py, contrib/compat.py, tools/customize.py.
+
+  Binary file formats (from tdxpy/reader/):
+  1. .day files: TdxDailyBarReader - 32 bytes per record (date_int, open, high, low, close, amount, vol)
+     Reference: pytdx/reader/history_data_reader.py
+  2. .lc1/.lc5: TdxLCMinBarReader - compressed minute format
+     Reference: pytdx/reader/lc_min_bar_reader.py
+  3. .1/.5: TdxMinBarReader - standard minute format
+     Reference: pytdx/reader/min_bar_reader.py
+  4. .dat block: BlockReader - sector/block definitions
+     Reference: pytdx/reader/block_reader.py
+  5. .blk custom: CustomerBlockReader - custom stock blocks
+     Reference: pytdx/reader/customer_block_reader.py
+
+  Path resolution in find_path():
+  - '#' in symbol -> market 'ds' (extended)
+  - '88' prefix -> market 'sh' (special indices)
+  - Otherwise -> get_stock_market() auto-detection
+
+  contrib/compat.ts - MooTdxDailyBarReader:
+  - Extends base daily reader with security type detection
+  - Maps types: SH_A_STOCK, SZ_A_STOCK, SH_B_STOCK, SZ_B_STOCK, etc.
+  - Applies coefficient adjustments per security type
+  - MooBaseSocketClient with reconnect support
+
+  BaseParse (parse.py):
+  - Reads block files: block_zs.dat, block_fg.dat, block_gn.dat
+  - Reads incon.dat (index constituent data)
+  - Reads cfg files (block configuration)
+  - parse() returns structured block data with group support
+
+  Customize (tools/customize.py):
+  - create(name, symbol): write .blk file + update blocknew.cfg
+  - update(name, symbol): modify existing .blk file
+  - search(name): find block by name, optional group parsing
+  - remove(name): delete .blk file + clean blocknew.cfg

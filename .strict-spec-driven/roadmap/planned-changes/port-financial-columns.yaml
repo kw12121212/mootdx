@@ -1,0 +1,39 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-financial-columns
+  milestone: 0005-financial-affair
+status: planned
+summary: Port 583-column financial data definitions and binary parser
+details: |
+  mootdx-ts/src/financial/columns.ts - Port from mootdx/financial/columns.py:
+    - columns: string[] with 583 Chinese column names for financial data fields
+    - Categories: balance sheet, income statement, cash flow, per-share metrics,
+      institutional holdings, profitability ratios, growth metrics, etc.
+    Reference: mootdx/financial/columns.py (17.2KB, 583 entries)
+
+  mootdx-ts/src/financial/base.ts - Port from mootdx/financial/base.py:
+    BaseReader:
+    - struct unpacking helpers for binary financial data
+    - field type definitions: int32, float64, string (GBK)
+    Reference: mootdx/financial/base.py
+
+  mootdx-ts/src/financial/financial.ts - Port from mootdx/financial/financial.py:
+    FinancialReader.to_data(filepath):
+    - Read .dat binary file
+    - Parse fixed header with record count and field definitions
+    - For each record: unpack fields according to column types
+    - Return typed object array with column names as keys
+
+    FinancialList:
+    - content(): connect to TDX server, call get_report_file_by_size() for listing
+    - fetch_and_parse(): download and parse file listing into FinancialFile[]
+    Reference: mootdx/financial/financial.py
+
+    Financial:
+    - fetch_only(filename, downdir, report_hook?): download single file via protocol
+    - Uses TdxHq_API.get_report_file_by_size() for actual data transfer
+depends_on:
+  - implement-std-time-parsers

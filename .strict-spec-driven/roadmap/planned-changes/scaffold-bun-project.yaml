@@ -1,0 +1,27 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: scaffold-bun-project
+  milestone: 0001-project-scaffold
+status: complete
+summary: Initialize mootdx-ts/ Bun project with TypeScript, build/test/lint tooling
+details: |
+  Create mootdx-ts/ directory at project root (NOT mixed with Python code).
+
+  Run `bun init` inside mootdx-ts/, set up package.json:
+    name: "mootdx", version: "0.1.0", type: "module"
+    exports: { ".": { import: "./dist/index.js", require: "./dist/index.cjs", types: "./dist/index.d.ts" } }
+    bin: { "mootdx": "./dist/cli/index.js" }
+    scripts: { build: "bunup", test: "bun test", lint: "biome check ./src" }
+
+  tsconfig.json: strict mode, target ES2022, moduleResolution bundler, types: ["bun"]
+  biome.json: formatter (2-space indent), linter (recommended rules)
+  bunup.config.ts: entry src/index.ts, format esm+cjs+dts, clean: true
+
+  Dependencies: p-retry, commander, cli-progress, iconv-lite
+  DevDependencies: @types/node, bunup, biome
+
+  Create mootdx-ts/src/ with placeholder index.ts exporting {}.
+depends_on: []

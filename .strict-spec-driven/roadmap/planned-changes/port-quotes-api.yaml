@@ -1,0 +1,55 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-quotes-api
+  milestone: 0003-core-quotes
+status: planned
+summary: Port StdQuotes (18 methods) and ExtQuotes (11 methods) returning typed results
+details: |
+  mootdx-ts/src/quotes.ts - Port from mootdx/quotes.py (769 lines).
+
+  Quotes factory: quotes(market: 'std'|'ext', options?) -> StdQuotes | ExtQuotes
+
+  BaseQuotes (abstract):
+    - constructor: calls config.setup(), resolves server IP from config, creates client
+    - reconnect(): reconnect if closed
+    - close(): disconnect client
+    - closed: boolean property
+    - config interaction: config.get('SERVER'), config.get('BESTIP'), config.set('BESTIP')
+
+  StdQuotes extends BaseQuotes:
+    - constructor: TdxHq_API(heartbeat, auto_retry, raise_exception), connect to resolved IP:port
+    - traffic(): get_traffic_stats()
+    - quotes(symbol?): get_security_quotes -> Quote[] (via to_data)
+    - bars(symbol, frequency, start, offset): get_security_bars -> OhlcBar[] (max 800)
+    - stockCount(market): get_security_count -> number
+    - stocks(market): paginated get_security_list -> SecurityInfo[] (batches of 1000)
+    - stockAll(): concat stocks for both markets
+    - indexBars(symbol, frequency, start, offset): get_index_bars -> OhlcBar[]
+    - minute(symbol): today's minute data -> MinuteData[]
+    - minutes(symbol, date): historical minute -> MinuteData[]
+    - transaction(symbol, start, offset): tick data -> Transaction[]
+    - transactions(symbol, start, offset, date): historical tick -> Transaction[]
+    - F10C(symbol): company info category listing
+    - F10(symbol, name): company info content (dict or single string)
+    - xdxr(symbol): get_xdxr_info -> XdxrRecord[]
+    - finance(symbol): get_finance_info -> FinanceInfo
+    - k(symbol, begin, end): date-range K-line with pagination -> OhlcBar[]
+      Pagination logic: estimate trading days (first -= int(first/2.8), last -= int(last/3.5))
+    - ohlc: alias for k()
+    - index(symbol, frequency, start, offset): alias for indexBars
+    - block(tofile): get_and_parse_block_info -> BlockInfo[]
+
+  ExtQuotes extends BaseQuotes:
+    - constructor: TdxExHq_API, warns about instability
+    - validate(market, symbol): parse market#symbol format
+    - All methods wrapped with p-retry: 3 attempts, random 1-10s wait, retry on empty/error
+    - markets, instrument, instrumentCount, instruments, quote, minute, minutes,
+      bars, transaction, transactions
+
+  to_data() converter: wraps raw protocol results into typed interfaces from types.ts.
+  Currently declared in utils but implemented here as it dispatches to protocol results.
+depends_on:
+  - implement-ext-market-parsers

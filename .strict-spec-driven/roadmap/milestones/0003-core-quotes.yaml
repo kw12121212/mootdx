@@ -1,0 +1,54 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0003-core-quotes:
+    title: Quotes API (StdQuotes + ExtQuotes)
+goal: Port the Quotes API with all methods returning typed results instead of pandas DataFrames
+scope:
+  in:
+    - Quotes factory function
+    - StdQuotes class with all 18 public methods
+    - ExtQuotes class with all 11 public methods (with p-retry)
+    - BaseQuotes with connection lifecycle (connect, reconnect, close, closed)
+    - to_data() universal converter
+  out:
+    - File format readers (Reader module)
+    - Financial data download (Affair module)
+    - Price adjustment algorithms
+done_criteria:
+  - Quotes.factory('std') returns StdQuotes connected to a live server
+  - bars(), index(), quotes(), minute(), transaction(), xdxr(), finance() all return typed data
+  - ExtQuotes methods retry up to 3 times on empty results or errors
+  - Invalid market codes throw MootdxValidationError equivalent
+  - to_data() converts raw protocol arrays to clean typed objects
+  - k() date-range pagination with trading-day estimation works correctly
+planned_changes: {}
+dependencies:
+  - 0002-tdx-protocol
+risks:
+  - 'Data format difference: Python returns pandas DataFrame, TS uses typed interfaces'
+  - Server connectivity depends on external TDX servers being available
+  - k() method has complex date-range pagination with trading day estimation
+status: proposed
+notes:
+  - 'k() date-range pagination logic: first/last offsets adjusted by ~1/3 for non-trading days'
+  - ExtQuotes extended market servers are currently unstable (Python warns about this)
+details: |
+  Port quotes.py - the main user-facing API for real-time market data.
+
+  Return type: typed interfaces from types.ts (OhlcBar[], Quote[], XdxrRecord[], etc.)
+
+  StdQuotes methods (18): traffic, quotes, bars, stockCount, stocks, stockAll,
+    indexBars, minute, minutes, transaction, transactions, F10C, F10, xdxr,
+    finance, k, ohlc, index, block
+
+  ExtQuotes methods (11): markets, instrument, instrumentCount, instruments,
+    quote, minute, minutes, bars, transaction, transactions
+
+  ExtQuotes retry: p-retry with 3 attempts, random wait 1-10s.
+  Check for empty results to trigger retry.
+
+  BaseQuotes constructor: calls config.setup(), resolves server from config,
+  creates TdxHq_API/TdxExHq_API instance, connects to resolved IP:port.

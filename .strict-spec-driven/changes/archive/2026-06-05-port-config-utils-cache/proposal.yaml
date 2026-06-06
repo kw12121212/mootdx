@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-config-utils-cache
+  status: proposed
+summary:
+  what:
+    - Port core utils (get_stock_market, get_stock_markets, get_frequency, md5sum, get_config_path, to_file for CSV/JSON, stock_bj_a) to mootdx-ts/src/utils/index.ts, and cache modules (file cache, timed LRU cache, timeit decorator) to mootdx-ts/src/cache/. Config module already ported in prior change.
+  why:
+    - Utils and cache are used by quotes, reader, affair, and CLI modules throughout the library
+scope:
+  in:
+    - mootdx-ts/src/utils/index.ts, mootdx-ts/src/cache/file.ts, mootdx-ts/src/cache/timed.ts, mootdx-ts/src/cache/timer.ts (new files), mootdx-ts/src/index.ts (update exports)
+  out:
+    - to_file XLSX/HDF5 support (no pandas equivalent), pickle cache (using JSON instead)
+unchanged_behavior:
+  - All existing Python codebase and specs; config.ts already ported
+roadmap:
+  milestone: 0001-project-scaffold
+  planned_change: port-config-utils-cache

@@ -1,0 +1,33 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-protocol-helpers
+sections:
+  Implementation:
+    create-helpers:
+      text: Create mootdx-ts/src/protocol/helpers.ts with getPrice, getVolume, getDatetime
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export protocol helpers
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with edge-case tests for getPrice (0, -1, single-byte, multi-byte), getVolume, getDatetime
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify only helpers.ts created and index.ts updated; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-protocol-helpers
+  status: proposed
+summary:
+  what:
+    - 'Implement TDX binary protocol helper functions in mootdx-ts/src/protocol/helpers.ts: getPrice (variable-length signed integer decoder), getVolume (logarithmic float reconstruction from packed int32), getDatetime (variable-length K-line timestamp parser)'
+  why:
+    - These helpers are the foundation of all TDX protocol packet parsing — every parser depends on them to decode binary data
+scope:
+  in:
+    - mootdx-ts/src/protocol/helpers.ts (new file), mootdx-ts/src/index.ts (update exports)
+  out:
+    - Protocol socket/client, higher-level parsers, network I/O
+unchanged_behavior:
+  - All existing Python codebase and specs; scaffold and types already ported
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-protocol-helpers

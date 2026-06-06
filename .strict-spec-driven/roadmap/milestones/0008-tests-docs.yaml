@@ -1,0 +1,57 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0008-tests-docs:
+    title: Tests and documentation
+goal: Achieve comprehensive test coverage and publish documentation
+scope:
+  in:
+    - Unit tests for protocol parsers using recorded binary fixtures
+    - Unit tests for utils, reader, adjustment algorithms, caching
+    - Integration tests for Reader with fixture binary files from tests/fixtures/
+    - CLI smoke tests via Commander programmatic API
+    - README.md and API documentation
+    - npm package publishing setup
+  out:
+    - Feature development (all features complete by this point)
+done_criteria:
+  - bun test passes all unit tests with 80%+ code coverage
+  - Protocol parser tests use recorded binary fixtures (no live server needed)
+  - Reader tests use existing tests/fixtures/ directory
+  - Adjustment tests verify against known Python outputs
+  - CLI smoke tests for all 6 commands
+  - README.md has usage examples matching Python version
+  - Package is publishable to npm
+planned_changes: {}
+dependencies:
+  - 0003-core-quotes
+  - 0004-reader
+  - 0005-financial-affair
+  - 0006-utils-adjust
+  - 0007-cli
+risks:
+  - Binary fixture compatibility between Python and TS must be verified byte-by-byte
+  - Live server tests are flaky; rely on recorded fixtures
+status: proposed
+notes:
+  - Fixture-based testing is critical for reliability
+  - Record ~20 real request/response pairs during milestone 0002
+details: |
+  Build test suite in mootdx-ts/tests/ using Bun's built-in test runner.
+
+  Test categories:
+  1. Protocol tests: Record binary request/response pairs from live server.
+     Store as fixture files. Test each parser deterministically.
+  2. Reader tests: Reuse tests/fixtures/ with real TDX binary files.
+  3. Utils tests: Pure functions (get_stock_market, get_frequency, md5sum).
+  4. Adjustment tests: Compare TS output with known Python outputs using cached xdxr fixtures.
+  5. Cache tests: File cache create/read/expiry/cleanup.
+  6. CLI tests: Commander programmatic API for command testing.
+
+  Documentation:
+  - README.md with installation, quickstart, API reference
+  - TSDoc comments on all public functions/classes
+  - MIGRATION.md for Python mootdx users
+  - package.json configured for npm publish

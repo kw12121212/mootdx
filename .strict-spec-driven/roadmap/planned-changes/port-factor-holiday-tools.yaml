@@ -1,0 +1,45 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: port-factor-holiday-tools
+  milestone: 0006-utils-adjust
+status: planned
+summary: Port factor data, holiday calendar, contrib/adjust, tdx2csv, DownloadTDXCaiWu
+details: |
+  mootdx-ts/src/utils/factor.ts - Port from mootdx/utils/factor.py:
+    fqFactor(symbol, method): fetch qfq/hfq adjustment factors from Sina Finance
+    URL: https://finance.sina.com.cn/realstock/company/{symbol}/nc.shtml
+    Cached to ~/.mootdx/caches/factor/{market}{symbol}.json
+    Returns: FactorRecord[]
+  Reference: mootdx/utils/factor.py
+
+  mootdx-ts/src/utils/holiday.ts - Port from mootdx/utils/holiday.py:
+    holidays(): fetch from Sina, decrypt with native JS (holiday.js imports directly!)
+    holiday(date, format?, country?, result?): check if date is trading holiday
+    holiday2(date): fetch from tdx.com.cn
+    Key simplification: holiday.js is already JS, runs natively in TS.
+    No mini_racer needed!
+  Reference: mootdx/utils/holiday.py, mootdx/utils/holiday.js
+
+  mootdx-ts/src/contrib/adjust.ts - Port from mootdx/contrib/adjust.py:
+    getAdjustYear(symbol, year, factor?): fetch adjusted data from TongHuaShun
+    URL: https://d.10jqka.com.cn/v6/line/hs_{symbol}/01/{year}.js
+    Parse response with regex to extract date/OHLCV/adjust columns
+  Reference: mootdx/contrib/adjust.py
+
+  mootdx-ts/src/tools/tdx2csv.ts - Port from mootdx/tools/tdx2csv.py:
+    txt2csv(filepath): convert TDX exported .txt files to .csv
+    batch(): async batch conversion with Promise.all
+  Reference: mootdx/tools/tdx2csv.py
+
+  mootdx-ts/src/tools/DownloadTDXCaiWu.ts - Port from mootdx/tools/DownloadTDXCaiWu.py:
+    DownloadTDXCaiWu class: download from data.tdx.com.cn
+    - MD5 checksums for verification
+    - Promise.all with concurrency limit (replaces thread pool)
+    - Auto-sync to TDX installation directory
+    - Uses Bun.fetch() instead of Python requests
+  Reference: mootdx/tools/DownloadTDXCaiWu.py
+depends_on:
+  - port-adjustment-algorithms

@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: implement-socket-and-base-protocol
+approach:
+  - Create TdxSocket wrapping Node.js net.Socket with connect/disconnect/send/receive methods. Create TdxBaseApi with sendRequest method that packs request header (magic+cmd+length), reads response header (16 bytes, IIIHH), reads body, decompresses with zlib if needed, handles multi-packet accumulation.
+decisions:
+  use-node-net:
+    decision: Use Node.js net module for TCP socket instead of Bun.connect() for compatibility and proven streaming support
+    rationale: Node.js net.Socket provides reliable TCP streaming with event-based read model, matching the Python socket.socket pattern. Bun.connect() API is less stable and documented for raw TCP streaming use cases.
+alternatives: []
+risks: []

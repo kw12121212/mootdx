@@ -1,0 +1,22 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/protocol/ext/
+  tests:
+    - mootdx-ts/src/protocol/ext/ext.test.ts
+operations:
+  ADDED:
+    ext-market-parsers:
+      strength: MUST
+      statement: Extended market parsers support futures/commodity data
+      scenarios:
+        ext-instrument-bars:
+          - GIVEN: a connected extended market API
+          - WHEN: getInstrumentBars is called
+          - THEN: ExtBar array is returned with OHLC data
+  MODIFIED: {}
+  REMOVED: {}

@@ -1,0 +1,32 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-login-heartbeat
+  milestone: 0002-tdx-protocol
+status: complete
+summary: Implement login sequence (0x000d + 0x0fdb), heartbeat (0x0004), and server tester
+details: |
+  mootdx-ts/src/protocol/login.ts:
+    - login1(socket): Send cmd 0x000d with client info payload
+    - login2(socket): Send cmd 0x0fdb with extended client info
+    - Both must succeed for usable connection
+
+  mootdx-ts/src/protocol/heartbeat.ts:
+    - HeartbeatManager class: sends cmd 0x0004 every 30 seconds
+    - Resets timer on any outgoing request
+    - Auto-disconnect after 3 consecutive failed heartbeats
+    - start()/stop() lifecycle methods
+
+  mootdx-ts/src/server.ts - Server tester:
+    - Port from mootdx/server.py (194 lines)
+    - connect(proxy: {ip, port}): test TCP socket connect, return latency
+    - connect2(proxy, index): test via TdxHq_API, return latency
+    - verify(proxy): async test both connect methods
+    - server(limit?, console?, sync?): test all HQ_HOSTS, return sorted by latency
+    - bestip(console?, limit?, sync?): find best IP, save to config via config.set('BESTIP', ...)
+    - check_server(): alias for bestip()
+    Reference: mootdx/server.py
+depends_on:
+  - implement-socket-and-base-protocol

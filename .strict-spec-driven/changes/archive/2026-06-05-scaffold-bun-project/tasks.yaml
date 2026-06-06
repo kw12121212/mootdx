@@ -1,0 +1,51 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: scaffold-bun-project
+sections:
+  Implementation:
+    create-mootdx-ts-dir:
+      text: Create mootdx-ts/ directory at project root with bun init
+      status: complete
+    setup-package-json:
+      text: 'Configure package.json: name mootdx, version 0.1.0, type module, dual exports, bin entry, scripts (build/test/lint)'
+      status: complete
+    setup-tsconfig:
+      text: Create tsconfig.json with strict mode, ES2022 target, bundler moduleResolution, bun types
+      status: complete
+    setup-biome:
+      text: Create biome.json with 2-space formatter and recommended linter rules
+      status: complete
+    setup-bunup:
+      text: Create bunup.config.ts with entry src/index.ts, esm+cjs+dts format, clean build
+      status: complete
+    install-deps:
+      text: Install dependencies (p-retry, commander, cli-progress, iconv-lite) and devDependencies (@types/node, bunup, biome)
+      status: complete
+    create-placeholder-src:
+      text: Create src/index.ts exporting empty object as placeholder
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds and produces dist/index.js (ESM) and dist/index.cjs (CJS)
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes with no errors
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test runs and passes with smoke test
+      status: complete
+      command: cd mootdx-ts && bun test
+    validate-exports:
+      text: "Verify dist/ contains index.js (ESM) and index.cjs (CJS); .d.ts generated when actual types are exported"
+      status: complete
+  Verification:
+    verify-scope:
+      text: Verify only mootdx-ts/ was created; Python codebase untouched
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

@@ -1,0 +1,75 @@
+schema: strict-spec-driven/roadmap-milestone/v2
+schema_version: 2
+artifact_type: roadmap_milestone
+schema_file: ../schemas/roadmap-milestone.yaml
+milestone:
+  0002-tdx-protocol:
+    title: TDX binary protocol engine
+goal: Implement the complete TDX binary protocol layer in TypeScript with full type safety
+scope:
+  in:
+    - TCP socket client with auto-reconnect and heartbeat
+    - Binary packet framing with 16-byte header parsing and zlib decompression
+    - Variable-length integer encoding/decoding (get_price, get_volume)
+    - All standard market protocol parsers (18 commands)
+    - All extended market protocol parsers (8 commands)
+    - Connection lifecycle (login1, login2, heartbeat, disconnect)
+    - Server testing and best-IP selection (server.ts)
+  out:
+    - High-level Quotes/Reader API wrappers
+    - File format readers
+    - CLI commands
+done_criteria:
+  - Can connect to TDX standard market server and complete login sequence
+  - get_security_bars returns correctly parsed OHLCV data matching Python tdxpy output
+  - get_security_quotes returns real-time 5-level order book data
+  - Heartbeat keeps connection alive for 60+ seconds without disconnect
+  - All packet structs use Buffer for little-endian reads with no data corruption
+  - Unit tests for variable-length integer encoding cover edge cases
+  - Server tester can find best IP from 37 HQ hosts
+planned_changes: {}
+dependencies:
+  - 0001-project-scaffold
+risks:
+  - Variable-length integer encoding is non-trivial; must precisely match pytdx/helper.py logic
+  - GBK string decoding needed for some response fields
+  - zlib decompression boundary conditions must handle partial TCP reads
+status: proposed
+notes:
+  - Port from nodetdx (github.com/hitrading/nodetdx) with TypeScript types added
+  - Record ~20 real request/response pairs as test fixtures during development
+  - server.ts (bestip) included here because it depends on protocol for connectivity testing
+details: |
+  Most technically challenging milestone. Protocol layer is the foundation for Quotes and Affair.
+
+  Implementation strategy:
+  1. helpers.ts (variable-length encoding) + thorough tests
+  2. socket.ts (TCP connection with Bun.connect or net.Socket)
+  3. base.ts (request framing, response header parsing, zlib decompression)
+  4. login.ts + heartbeat.ts, verify with live server
+  5. Parsers one by one, testing each against live data
+  6. server.ts for best-IP selection
+
+  Packet header format (response):
+    seq_no(U16LE) + cmd(U16LE) + pkg_type(U16LE) + zip_size(U16LE) + unzip_size(U32LE) = 16 bytes
+
+  Standard commands:
+    login1(0x000d), login2(0x0fdb), heartbeat(0x0004),
+    security_count(0x044e), security_list(0x0450),
+    security_bars(0x052d), security_quotes(0x053e),
+    index_bars, minute_time, history_minute_time,
+    transaction_data, history_transaction_data,
+    xdxr_info, finance_info,
+    company_info_category, company_info_content,
+    block_info, report_file_by_size
+
+  Extended commands:
+    markets, instrument_count, instrument_info,
+    instrument_bars, instrument_quote,
+    minute_time, transaction_data, history_transaction_data
+
+  References:
+    pytdx/parser/base.py - Transport layer
+    pytdx/helper.py - get_price/get_volume encoding
+    pytdx/parser/*.py - Individual command structures
+    nodetdx (GitHub) - Existing JS implementation

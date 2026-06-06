@@ -1,0 +1,42 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-config-utils-cache
+sections:
+  Implementation:
+    create-utils:
+      text: "Create mootdx-ts/src/utils/index.ts with get_stock_market, get_stock_markets, get_frequency, md5sum, get_config_path, to_file (CSV/JSON), stock_bj_a"
+      status: complete
+    create-file-cache:
+      text: "Create mootdx-ts/src/cache/file.ts with fileCache decorator using JSON files"
+      status: complete
+    create-timed-cache:
+      text: "Create mootdx-ts/src/cache/timed.ts with lruCache using Map with timestamp expiry"
+      status: complete
+    create-timer:
+      text: "Create mootdx-ts/src/cache/timer.ts with timeit decorator"
+      status: complete
+    update-index:
+      text: "Update mootdx-ts/src/index.ts to re-export utils and cache modules"
+      status: complete
+  Testing:
+    run-build:
+      text: "bun run build succeeds"
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: "bun run lint passes"
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: "bun test passes with unit tests for utils and cache"
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: "Verify only new .ts files created; Python codebase untouched"
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

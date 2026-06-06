@@ -1,0 +1,28 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: implement-ext-market-parsers
+  milestone: 0002-tdx-protocol
+status: planned
+summary: Implement all 8 extended market protocol parsers (TdxExHq_API)
+details: |
+  mootdx-ts/src/protocol/ext/ - separate API class for extended market (futures/commodities).
+
+  markets.ts - get_markets(): market list with codes and names
+  instruments.ts:
+    - get_instrument_count(): number
+    - get_instrument_info(start, count): instrument listing
+  instrument_bars.ts - get_instrument_bars(category, market, code, start, count): K-line
+  instrument_quote.ts - get_instrument_quote(market, code): 5-level quote
+  minute_time.ts - get_minute_time_data(market, code): intraday
+  transaction.ts:
+    - get_transaction_data(market, code, start, count): tick data
+    - get_history_transaction_data(market, code, date, start, count): historical tick
+
+  Extended market uses different servers (port 7720/7727) and TdxExHq_API class.
+  Reference: pytdx/exhq/*.py
+  Note: Extended market servers currently unstable.
+depends_on:
+  - implement-std-kline-parsers

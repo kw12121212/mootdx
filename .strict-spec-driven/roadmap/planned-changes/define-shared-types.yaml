@@ -1,0 +1,29 @@
+schema: strict-spec-driven/planned-change/v1
+schema_version: 1
+artifact_type: planned_change
+schema_file: ../schemas/planned-change.yaml
+planned_change:
+  id: define-shared-types
+  milestone: 0001-project-scaffold
+status: complete
+summary: Define all shared TypeScript interfaces in src/types.ts
+details: |
+  Create mootdx-ts/src/types.ts with all shared interfaces used across modules.
+
+  Interfaces:
+    OhlcBar { date: string; open: number; high: number; low: number; close: number; vol: number; amount: number; code?: string; }
+    QuoteLevel { price: number; volume: number; }
+    Quote { market: number; code: string; active: number; price: number; lastClose: number; open: number; high: number; low: number; servertime: number; vol: number; curVol: number; amount: number; sVol: number; bVol: number; bid1-5: QuoteLevel; ask1-5: QuoteLevel; }
+    XdxrRecord { year: number; month: number; day: number; category: number; fhps: number; bonus: number; sgs: number; pgjg: number; peigujia: number; songgu: number; zhuanzeng: number; xrdx: number; }
+    FinanceInfo { [key: string]: string | number; }
+    MinuteData { price: number; vol: number; avgPrice: number; }
+    Transaction { time: string; price: number; vol: number; num: number; buyOrSell: number; }
+    SecurityInfo { market: number; code: string; name: string; }
+    BlockInfo { blockType: number; code: string; name: string; securities: SecurityInfo[]; }
+    FactorRecord { date: string; qfq: number; hfq: number; }
+    FinancialFile { filename: string; hash: string; filesize: number; }
+
+  Also define Market enum (SZ=0, SH=1, BJ=2) and Frequency type.
+  Export all from src/index.ts.
+depends_on:
+  - scaffold-bun-project

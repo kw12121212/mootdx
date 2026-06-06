@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: scaffold-bun-project
+  status: proposed
+summary:
+  what:
+    - Initialize the mootdx-ts/ Bun/TypeScript project with package.json, tsconfig.json, biome.json, bunup.config.ts, placeholder src/index.ts, and install dependencies
+  why:
+    - All subsequent TypeScript milestones depend on a working project scaffold with build, test, and lint tooling configured
+scope:
+  in:
+    - 'Project root: new mootdx-ts/ directory'
+  out:
+    - Python source code, protocol implementation, business logic, CLI commands
+unchanged_behavior:
+  - All existing Python codebase and specs remain untouched
+roadmap:
+  milestone: 0001-project-scaffold
+  planned_change: scaffold-bun-project
