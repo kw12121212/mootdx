@@ -8,7 +8,8 @@ spec:
 mapping:
   implementation:
     - mootdx/reader.py
-  tests: []
+  tests:
+    - mootdx-ts/src/e2e.test.ts
 requirements:
   R-001:
     strength: MUST
@@ -106,3 +107,11 @@ requirements:
         - GIVEN: A StdReader with tdxdir containing block files
         - WHEN: stdReader.block('block_zs') is called
         - THEN: Returns parsed block data from BaseParse
+  e2e-reader-parsers:
+    strength: MUST
+    statement: Binary parsers (parseDailyBars, parseLCMinuteBars, parseMinuteBars) correctly decode crafted binary buffers into OhlcBar arrays without file I/O
+    scenarios:
+      e2e-parse-daily:
+        - GIVEN: A crafted Buffer containing valid daily bar binary records
+        - WHEN: parseDailyBars is called with the buffer
+        - THEN: Returns OhlcBar[] with correct date strings, OHLC prices, and volumes

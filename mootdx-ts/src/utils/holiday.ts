@@ -96,7 +96,7 @@ export async function holiday2(date?: string): Promise<HolidayRecord[]> {
 
 export async function isHoliday(
   date?: string,
-  format = "%Y-%m-%d",
+  _format = "%Y-%m-%d",
   country = "中国",
 ): Promise<boolean> {
   let target: Date;

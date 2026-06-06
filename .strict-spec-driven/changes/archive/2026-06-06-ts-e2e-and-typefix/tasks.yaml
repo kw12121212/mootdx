@@ -1,0 +1,37 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: ../schemas/task-list.yaml
+change: ts-e2e-and-typefix
+sections:
+  Implementation:
+    fix-encoding-types:
+      text: 'Fix 4 TS2345 errors: create shared decodeGBK using iconv-lite in src/utils/index.ts, replace scattered TextDecoder("gb2312") in parse.ts, company_info.ts, customize.ts, tdx2csv.ts. Remove unused variable warnings (reader.ts, holiday.ts, DownloadTDXCaiWu.ts, index.ts).'
+      status: complete
+    add-e2e-tests:
+      text: 'Add e2e tests in mootdx-ts/src/e2e.test.ts covering: config setup/get/set/has, consts (HQ_HOSTS, EX_HOSTS, MARKET_*), get_stock_market/get_stock_markets, get_frequency, md5sum, parseDailyBars/parseLCMinuteBars/parseMinuteBars with crafted binary buffers, financial columns count (583), holiday calendar checks, factorReversion/dividendReversion with sample data, fileCache/lruCache lifecycle, protocol helpers (getPrice, getVolume), reader factory errors, quotes factory errors.'
+      status: complete
+  Testing:
+    run-typecheck:
+      text: Verify zero TypeScript diagnostic errors after fix.
+      status: complete
+      command: cd mootdx-ts && npx tsc --noEmit
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-unit-tests:
+      text: Run all existing unit tests (must still pass).
+      status: complete
+      command: cd mootdx-ts && bun test
+    run-build:
+      text: Verify build succeeds.
+      status: complete
+      command: cd mootdx-ts && bun run build
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-typecheck
+  unit_test_task: run-unit-tests

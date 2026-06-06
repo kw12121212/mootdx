@@ -10,7 +10,8 @@ mapping:
     - mootdx/quotes.py
     - mootdx/server.py
     - mootdx/consts.py
-  tests: []
+  tests:
+    - mootdx-ts/src/e2e.test.ts
 requirements:
   Q-001:
     strength: MUST
@@ -212,3 +213,11 @@ requirements:
         - GIVEN: a valid symbol and method
         - WHEN: fqFactor is called
         - THEN: returns FactorRecord array with date and factor values
+  e2e-public-api:
+    strength: MUST
+    statement: The public API exports from src/index.ts are importable and basic types/constants are accessible without network connections
+    scenarios:
+      e2e-import:
+        - GIVEN: The mootdx-ts package is built
+        - WHEN: A test imports from the package entry point
+        - THEN: All named exports are accessible and have correct types

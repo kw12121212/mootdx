@@ -249,7 +249,7 @@ export class StdReader extends ReaderBase {
     return parser.parse(symbol, group);
   }
 
-  block_new(name: string, symbol: string[], group: boolean = false): string[] | CustomerBlockRecord[] | CustomerBlockGroup[] | null {
+  block_new(name: string, _symbol: string[], group: boolean = false): string[] | CustomerBlockRecord[] | CustomerBlockGroup[] | null {
     const customize = new Customize(this.tdxdir);
     return customize.search(name, group);
   }

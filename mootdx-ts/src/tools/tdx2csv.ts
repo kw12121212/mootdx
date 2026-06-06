@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { decodeGBK } from "../utils";
 import { createLogger } from "../logger";
 
 const log = createLogger("tdx2csv");
@@ -14,7 +15,7 @@ export function txt2csv(infile: string, outfile?: string): Record<string, string
 
   try {
     const raw = readFileSync(infile);
-    const text = new TextDecoder("gb2312" as unknown as string).decode(raw);
+    const text = decodeGBK(raw);
     const lines = text.split(/\r?\n/);
 
     // Skip first 2 header lines and last summary line

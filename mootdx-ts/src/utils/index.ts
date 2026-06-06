@@ -1,11 +1,16 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import iconv from "iconv-lite";
 import { FREQUENCY, MARKET_BJ, MARKET_SH, MARKET_SZ } from "../consts";
 import { createLogger } from "../logger";
 import type { SecurityInfo } from "../types";
 
 const log = createLogger("utils");
+
+export function decodeGBK(buf: Buffer): string {
+  return iconv.decode(buf, "gb2312");
+}
 
 export function get_stock_market(symbol: string, asString = false): number | string {
   const lower = symbol.toLowerCase();

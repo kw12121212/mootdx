@@ -1,0 +1,22 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/e2e.test.ts
+  tests:
+    - mootdx-ts/src/e2e.test.ts
+operations:
+  ADDED:
+    e2e-public-api:
+      strength: MUST
+      statement: The public API exports from src/index.ts are importable and basic types/constants are accessible without network connections
+      scenarios:
+        e2e-import:
+          - GIVEN: The mootdx-ts package is built
+          - WHEN: A test imports from the package entry point
+          - THEN: All named exports are accessible and have correct types
+  MODIFIED: {}
+  REMOVED: {}

@@ -1,0 +1,33 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: ts-cli-standalone-binary
+sections:
+  Implementation:
+    add-build-cli-script:
+      text: Add a build:cli script to mootdx-ts/package.json that runs bun build --compile src/cli/index.ts --outfile mootdx to produce a standalone binary.
+      status: complete
+    verify-help-works:
+      text: Verify the compiled binary produces --help output showing all commands (quotes, reader, bestip, affair, bundle) with their descriptions and options.
+      status: complete
+  Testing:
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-build:
+      text: Build the standalone CLI binary.
+      status: complete
+      command: cd mootdx-ts && bun run build:cli
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

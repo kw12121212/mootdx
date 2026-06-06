@@ -1,0 +1,19 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: ts-e2e-and-typefix
+  status: proposed
+summary:
+  what:
+    - Add end-to-end tests for the mootdx-ts TypeScript port and fix all TypeScript type diagnostic errors
+  why:
+    - The TypeScript port (mootdx-ts) has 196 unit tests passing but no e2e tests that exercise the public API end-to-end. Additionally, 4 files have TypeScript type errors related to TextDecoder encoding parameters that block clean tsc --noEmit builds.
+scope:
+  in:
+    - 'mootdx-ts/src: all TS source files; mootdx-ts/src/*.test.ts: existing test patterns; mootdx-ts/package.json: test scripts'
+  out:
+    - TypeScript builds cleanly with tsc --noEmit (0 errors); e2e tests cover key public API paths; all existing 196 unit tests continue passing
+unchanged_behavior:
+  - 'Python library (mootdx/): no changes; existing unit tests: no regressions; build output (dist/): no changes; public API surface (src/index.ts exports): no changes'

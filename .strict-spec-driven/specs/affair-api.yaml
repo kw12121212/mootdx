@@ -8,8 +8,9 @@ spec:
 mapping:
   implementation:
     - mootdx/affair.py
-    - mootdx/financial/
-  tests: []
+    - mootdx/financial
+  tests:
+    - mootdx-ts/src/e2e.test.ts
 requirements:
   A-001:
     strength: MUST

@@ -1,0 +1,19 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: ts-cli-standalone-binary
+  status: proposed
+summary:
+  what:
+    - Single-file standalone CLI binary for mootdx-ts with --help self-documentation
+  why:
+    - User needs a self-contained CLI binary that can be distributed without requiring Bun/Node.js runtime, with built-in --help for discoverability
+scope:
+  in:
+    - mootdx-ts/src/cli/index.ts (existing Commander-based CLI), mootdx-ts/bunup.config.ts (build config)
+  out:
+    - Compiled standalone binary via bun build --compile, updated build scripts in package.json
+unchanged_behavior:
+  - All library APIs (quotes, reader, affair, server), existing Commander command structure and options, existing source files outside build config

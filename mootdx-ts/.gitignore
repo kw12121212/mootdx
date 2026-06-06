@@ -5,6 +5,7 @@ node_modules
 out
 dist
 *.tgz
+mootdx
 
 # code coverage
 coverage

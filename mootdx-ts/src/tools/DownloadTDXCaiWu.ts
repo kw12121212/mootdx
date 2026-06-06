@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { copyFileSync, readdirSync, rmSync, statSync } from "node:fs";
+import { copyFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { createLogger } from "../logger";
 
@@ -92,12 +92,10 @@ async function downloadChunked(urls: string[], saveDir: string): Promise<void> {
 }
 
 export class DownloadTDXCaiWu {
-  private tdxRootDir: string;
   private tdxCwDir: string;
   private tmpCwDir: string;
 
   constructor(tdxRootDir = "new_tdx") {
-    this.tdxRootDir = tdxRootDir;
     this.tdxCwDir = join(tdxRootDir, "vipdoc", "cw");
     this.tmpCwDir = "cw_tmp";
   }

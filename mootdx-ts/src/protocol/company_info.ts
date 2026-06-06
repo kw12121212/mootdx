@@ -1,10 +1,6 @@
 import type { CompanyInfoCategory } from "../types";
+import { decodeGBK } from "../utils";
 import type { TdxBaseApi } from "./base";
-
-function decodeGBK(buf: Buffer): string {
-  const decoder = new TextDecoder("gb2312" as BufferEncoding);
-  return decoder.decode(buf).replace(/\0+$/, "");
-}
 
 export function buildCompanyInfoCategoryRequest(
   market: number,
@@ -48,8 +44,8 @@ export function parseCompanyInfoCategoryResponse(
     pos += 4;
 
     results.push({
-      name: decodeGBK(nameBuf),
-      filename: decodeGBK(filenameBuf),
+      name: decodeGBK(nameBuf).replace(/\0+$/, ""),
+      filename: decodeGBK(filenameBuf).replace(/\0+$/, ""),
       start,
       length,
     });

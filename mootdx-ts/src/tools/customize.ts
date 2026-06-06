@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, unlinkSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { get_stock_market } from "../utils";
+import { decodeGBK, get_stock_market } from "../utils";
 
 // --- Customer block types ---
 
@@ -19,11 +19,6 @@ export type CustomerBlockGroup = {
 };
 
 // --- Helpers ---
-
-function decodeGBK(buf: Buffer): string {
-  const decoder = new TextDecoder("gb2312" as unknown as string);
-  return decoder.decode(buf);
-}
 
 function readBlkFile(filepath: string): string[] {
   const buf = readFileSync(filepath);

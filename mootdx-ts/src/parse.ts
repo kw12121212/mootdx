@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { TYPE_FLATS, TYPE_GROUP } from "./consts";
+import { decodeGBK } from "./utils";
 
 // --- Block data types ---
 
@@ -21,11 +22,6 @@ export type BlockGroup = {
 export type InconData = Record<string, Record<string, string>>;
 
 // --- Local .dat binary block parser ---
-
-function decodeGBK(buf: Buffer): string {
-  const decoder = new TextDecoder("gb2312" as unknown as string);
-  return decoder.decode(buf);
-}
 
 function parseBlockDat(buf: Buffer, mode: typeof TYPE_FLATS | typeof TYPE_GROUP): BlockRecord[] | BlockGroup[] {
   const blockCount = buf.readUInt16LE(384);
