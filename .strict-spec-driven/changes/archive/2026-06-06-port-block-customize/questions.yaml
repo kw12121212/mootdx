@@ -1,0 +1,17 @@
+schema: strict-spec-driven/question-list/v1
+schema_version: 1
+artifact_type: question_list
+schema_file: templates/strict-spec-driven/schemas/question-list.yaml
+change: port-block-customize
+open: []
+resolved:
+  - id: block-dat-format
+    question: The Python code uses tdxpy BlockReader for .dat block files. Our protocol/block.ts already parses online block data. Are the local .dat block files identical in format to online block data, or do they have a different header/structure?
+    context: BaseParse.parse() delegates to BlockReader.get_df() for block_*.dat files. Need to know if we can reuse existing binary parsing or need a new parser.
+    answer: 'Local .dat block files have a distinct binary format from online block data. Format: at offset 384, a U16 block_count; per block: 9 bytes GBK name, then 2x U16 (stock_count, block_type), then stock_count * 7 bytes of null-padded code strings. Total stock area per block is 2800 bytes. Must implement a dedicated local block parser, not reuse online protocol parsers.'
+    status: resolved
+  - id: customer-block-format
+    question: What is the exact binary format of .blk files used by CustomerBlockReader? The Python code reads them but the format details come from tdxpy which is an external dependency.
+    context: Customize.search() uses CustomerBlockReader.get_df(). Need to understand the .blk binary format to port correctly.
+    answer: '.blk files are plain text (GBK encoded), one stock code per line with a single prefix character that gets stripped (code[1:]). blocknew.cfg is binary: 120-byte entries where bytes 0-49 are GBK display name (null-padded) and bytes 50-119 are GBK filename prefix (null-padded). Each entry maps to a .blk file named <prefix>.blk.'
+    status: resolved

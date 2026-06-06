@@ -30,7 +30,7 @@ dependencies:
 risks:
   - Financial binary format uses 583 columns with complex struct layout
   - FinancialList and Financial both need live TdxHq_API connection (report_file_by_size)
-status: proposed
+status: complete
 notes:
   - Requires protocol engine because FinancialList.content() calls TdxHq_API.get_report_file_by_size()
   - Use Promise.all with concurrency limit instead of Python asyncio

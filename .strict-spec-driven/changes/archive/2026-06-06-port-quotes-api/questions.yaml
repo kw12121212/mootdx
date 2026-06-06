@@ -1,0 +1,12 @@
+schema: strict-spec-driven/question-list/v1
+schema_version: 1
+artifact_type: question_list
+schema_file: templates/strict-spec-driven/schemas/question-list.yaml
+change: port-quotes-api
+open: []
+resolved:
+  - id: retry-strategy
+    question: Should ExtQuotes retry use a simple loop with random wait (1-10s) and 3 attempts, or a more sophisticated backoff strategy?
+    context: Python uses tenacity @retry with stop_after_attempt(3) and wait_random(1,10). Simple loop is lighter weight, matches the behavior.
+    answer: Use simple loop with 3 attempts and Math.random() * 9000 + 1000 ms wait, matching Python's tenacity behavior. No external retry library needed.
+    status: resolved

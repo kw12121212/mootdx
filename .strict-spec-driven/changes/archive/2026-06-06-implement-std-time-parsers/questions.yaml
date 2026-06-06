@@ -1,0 +1,12 @@
+schema: strict-spec-driven/question-list/v1
+schema_version: 1
+artifact_type: question_list
+schema_file: templates/strict-spec-driven/schemas/question-list.yaml
+change: implement-std-time-parsers
+open: []
+resolved:
+  - id: gbk-decoding
+    question: Should company_info and block parsers use iconv-lite for GBK decoding, or rely on TextDecoder('gbk') which is available in Bun?
+    context: Company info category names and block names are GBK-encoded in TDX protocol. Bun supports TextDecoder with gb2312/gbk labels.
+    answer: Use TextDecoder('gbk') which is natively supported in Bun. No external dependency needed.
+    status: resolved

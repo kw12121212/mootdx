@@ -1,0 +1,13 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: port-factor-holiday-tools
+approach:
+  - Port each module as standalone TS file. factor.ts fetches from Sina with JSON cache. holiday.ts runs holiday.js natively. contrib/adjust.ts fetches TongHuaShun with regex. tdx2csv parses GBK .txt to CSV. DownloadTDXCaiWu uses chunked Promise.all.
+decisions:
+  factor-caching:
+    decision: Use JSON file caching with TTL refresh instead of Python pickle
+    rationale: These are utility modules with clear 1:1 mapping from Python. holiday.js runs natively eliminating mini_racer. Async patterns replace thread pools.
+alternatives: []
+risks: []

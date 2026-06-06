@@ -13,21 +13,85 @@ mapping:
 requirements:
   A-001:
     strength: MUST
-    statement: "Affair.files() returns a list of available financial report files from the remote server, each with filename and hash fields."
+    statement: Affair.files() returns a list of available financial report files from the remote server, each with filename and hash fields.
     scenarios: {}
   A-002:
     strength: MUST
-    statement: "Affair.fetch(downdir, filename) downloads a single financial report file with progress bar to the specified directory."
+    statement: Affair.fetch(downdir, filename) downloads a single financial report file with progress bar to the specified directory.
     scenarios: {}
   A-003:
     strength: MUST
-    statement: "Affair.fetch(downdir) without filename downloads all available financial files asynchronously, skipping files whose MD5 matches existing ones."
+    statement: Affair.fetch(downdir) without filename downloads all available financial files asynchronously, skipping files whose MD5 matches existing ones.
     scenarios: {}
   A-004:
     strength: MUST
-    statement: "Affair.parse(downdir, filename) downloads (if needed) and parses a financial report file, returning structured data."
+    statement: Affair.parse(downdir, filename) downloads (if needed) and parses a financial report file, returning structured data.
     scenarios: {}
   A-005:
     strength: MUST
-    statement: "If downdir does not exist, it is created automatically."
+    statement: If downdir does not exist, it is created automatically.
     scenarios: {}
+  financial-columns:
+    strength: MUST
+    statement: columns.ts exports a string array of 583 Chinese column names used as field labels for binary financial data records
+    scenarios:
+      columns-count:
+        - GIVEN: The columns array is imported
+        - WHEN: columns.length is checked
+        - THEN: Returns 583
+  financial-reader:
+    strength: MUST
+    statement: FinancialReader.toData(filepath) reads .dat or .zip binary financial files, parses the header (report_date, max_count, report_size), iterates stock items (code + offset), and returns an array of objects with column names as keys
+    scenarios:
+      parse-dat:
+        - GIVEN: A .dat financial data file with N stock records
+        - WHEN: FinancialReader.toData(filepath) is called
+        - THEN: Returns array of objects with code, report_date, and 583 float fields keyed by column names
+  financial-list:
+    strength: MUST
+    statement: FinancialList.content() connects to TDX server, fetches tdxfin/gpcw.txt via getReportFileBySize, and parse() returns FinancialFile[] with filename, hash, and filesize fields
+    scenarios:
+      list-files:
+        - GIVEN: A TDX server connection is available
+        - WHEN: financialList.fetchAndParse() is called
+        - THEN: Returns array of FinancialFile objects with filename, hash, filesize
+  financial-download:
+    strength: MUST
+    statement: Financial.content(filename, downdir) downloads a financial file via getReportFileBySize to the specified directory, with optional progress callback
+    scenarios:
+      download-file:
+        - GIVEN: A TDX server connection and valid filename
+        - WHEN: financial.content(filename, downdir) is called
+        - THEN: Downloads the file to downdir and returns the file path
+  affair-files:
+    strength: MUST
+    statement: Affair.files() returns list of available financial report files from the remote server via FinancialList
+    scenarios:
+      list-files:
+        - GIVEN: A TDX server connection is available
+        - WHEN: Affair.files() is called
+        - THEN: Returns FinancialFile[] with filename, hash, filesize
+  affair-fetch-single:
+    strength: MUST
+    statement: Affair.fetch(downdir, filename) downloads a single financial file to downdir, creating the directory if needed
+    scenarios:
+      fetch-single:
+        - GIVEN: A valid filename and downdir path
+        - WHEN: Affair.fetch(downdir, filename) is called
+        - THEN: File is downloaded to downdir/filename
+  affair-fetch-batch:
+    strength: MUST
+    statement: Affair.fetch(downdir) without filename downloads all files asynchronously, skipping files whose MD5 matches existing ones
+    scenarios:
+      fetch-batch:
+        - GIVEN: A downdir path
+        - WHEN: Affair.fetch(downdir) is called without filename
+        - THEN: All files are downloaded in parallel, existing files with matching MD5 are skipped
+  affair-parse:
+    strength: MUST
+    statement: Affair.parse(downdir, filename) downloads file if needed then parses it via FinancialReader.toData, returning structured FinancialRecord[]
+    scenarios:
+      parse-file:
+        - GIVEN: A downdir and filename
+        - WHEN: Affair.parse(downdir, filename) is called
+        - THEN: File is downloaded if missing, then parsed into FinancialRecord[]

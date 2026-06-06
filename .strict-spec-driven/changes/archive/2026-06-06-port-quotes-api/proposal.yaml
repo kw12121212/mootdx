@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-quotes-api
+  status: proposed
+summary:
+  what:
+    - 'Port the Quotes API: StdQuotes (18 methods) and ExtQuotes (11 methods) with typed return values, factory function, connection lifecycle, retry logic, and date-range K-line pagination'
+  why:
+    - Provides the main user-facing API for real-time market data, wrapping all low-level protocol parsers into high-level typed methods
+scope:
+  in:
+    - mootdx-ts/src/quotes.ts
+  out:
+    - StdQuotes class, ExtQuotes class, BaseQuotes abstract class, Quotes factory function, to_data converter
+unchanged_behavior:
+  - All Python codebase, existing protocol parsers, server.ts, config.ts, utils.ts
+roadmap:
+  milestone: 0003-core-quotes
+  planned_change: port-quotes-api

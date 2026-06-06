@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-binary-file-readers
   milestone: 0004-reader
-status: planned
+status: complete
 summary: Port binary file readers (.day, .lc1, .lc5, .1, .5) and ReaderBase with path resolution
 details: |
   mootdx-ts/src/reader.ts - Port from mootdx/reader.py.

@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-adjustment-algorithms
+  status: proposed
+summary:
+  what:
+    - 'Port price adjustment algorithms (qfq/hfq) from tools/reversion.py and utils/adjust.py: factor-based reversion, dividend/split reversion, ETF reversion, brute-force qfq, and the toAdjust/toAdjust2/getXdXr/fqFactor pipeline'
+  why:
+    - Milestone 0006 requires price adjustment for correct historical data analysis
+scope:
+  in:
+    - mootdx-ts/src/tools/reversion.ts, mootdx-ts/src/utils/adjust.ts
+  out:
+    - Complete price adjustment pipeline with qfq/hfq support for stocks and ETFs
+unchanged_behavior:
+  - Quotes API, protocol modules, reader module, financial module, block/customize modules
+roadmap:
+  milestone: 0006-utils-adjust
+  planned_change: port-adjustment-algorithms

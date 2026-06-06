@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-affair
+  status: proposed
+summary:
+  what:
+    - Port Affair orchestrator class with files(), fetch(downdir, filename?), parse(downdir, filename) methods, MD5 skip logic, and async batch download
+  why:
+    - Milestone 0005 requires the Affair orchestrator to complete financial data download and parse workflow
+scope:
+  in:
+    - mootdx-ts/src/affair.ts
+  out:
+    - Affair class that orchestrates FinancialList and Financial for listing, downloading, and parsing financial data files
+unchanged_behavior:
+  - Financial columns, FinancialReader, FinancialList, Financial classes, Quotes API, Reader module
+roadmap:
+  milestone: 0005-financial-affair
+  planned_change: port-affair

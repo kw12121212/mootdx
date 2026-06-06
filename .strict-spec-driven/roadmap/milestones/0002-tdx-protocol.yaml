@@ -34,7 +34,7 @@ risks:
   - Variable-length integer encoding is non-trivial; must precisely match pytdx/helper.py logic
   - GBK string decoding needed for some response fields
   - zlib decompression boundary conditions must handle partial TCP reads
-status: active
+status: complete
 notes:
   - Port from nodetdx (github.com/hitrading/nodetdx) with TypeScript types added
   - Record ~20 real request/response pairs as test fixtures during development

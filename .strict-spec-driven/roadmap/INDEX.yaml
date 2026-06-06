@@ -10,28 +10,28 @@ milestones:
   0002-tdx-protocol:
     title: TDX binary protocol engine
     path: roadmap/milestones/0002-tdx-protocol.yaml
-    status: active
+    status: complete
   0003-core-quotes:
     title: Quotes API (StdQuotes + ExtQuotes)
     path: roadmap/milestones/0003-core-quotes.yaml
-    status: proposed
+    status: complete
   0004-reader:
     title: Offline Reader (StdReader + ExtReader)
     path: roadmap/milestones/0004-reader.yaml
-    status: proposed
+    status: complete
   0005-financial-affair:
     title: Financial data download and parse (Affair)
     path: roadmap/milestones/0005-financial-affair.yaml
-    status: proposed
+    status: complete
   0006-utils-adjust:
     title: Price adjustment, factor data, holiday calendar, and data tools
     path: roadmap/milestones/0006-utils-adjust.yaml
-    status: proposed
+    status: complete
   0007-cli:
     title: CLI commands
     path: roadmap/milestones/0007-cli.yaml
-    status: proposed
+    status: complete
   0008-tests-docs:
     title: Tests and documentation
     path: roadmap/milestones/0008-tests-docs.yaml
-    status: proposed
+    status: complete

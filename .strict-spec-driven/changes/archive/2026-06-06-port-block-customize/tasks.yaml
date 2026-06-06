@@ -1,0 +1,42 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-block-customize
+sections:
+  Implementation:
+    implement-base-parse:
+      text: Port BaseParse class to mootdx-ts/src/parse.ts with parse(symbol, group?), read_text(path), __incon(path), cfg(path) methods. Uses GBK TextDecoder for text files and existing block binary parsing for .dat files.
+      status: complete
+    implement-customize:
+      text: Port Customize class to mootdx-ts/src/tools/customize.ts with create(name, symbol), update(name, symbol, overflow?), search(name?, group?), remove(name) methods. Manages .blk files and blocknew.cfg in T0002/blocknew/.
+      status: complete
+    implement-customer-block-reader:
+      text: Add parseCustomerBlock to parse.ts or a dedicated module for reading .blk binary files (CustomerBlockReader equivalent). Returns block name, type, and code list.
+      status: complete
+    add-reader-block-methods:
+      text: Add block(symbol, group?) and block_new(name, symbol, group?) methods to StdReader class that delegate to BaseParse and Customize.
+      status: complete
+    update-exports:
+      text: Update mootdx-ts/src/index.ts to export BaseParse, Customize, and any new types from parse.ts and tools/customize.ts.
+      status: complete
+  Testing:
+    run-build:
+      text: Run build validation.
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

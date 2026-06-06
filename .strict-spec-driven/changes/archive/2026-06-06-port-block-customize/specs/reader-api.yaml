@@ -1,0 +1,54 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: reader-api
+mapping:
+  implementation:
+    - mootdx-ts/src/parse.ts
+    - mootdx-ts/src/tools/customize.ts
+    - mootdx-ts/src/reader.ts
+  tests:
+    - mootdx-ts/tests/parse.test.ts
+    - mootdx-ts/tests/customize.test.ts
+    - mootdx-ts/tests/reader.test.ts
+operations:
+  ADDED:
+    block-parse:
+      strength: MUST
+      statement: BaseParse(tdxdir).parse(symbol, group?) reads block files from T0002/hq_cache/ or incon.dat, returning parsed block data. For block_*.dat files, delegates to binary block parsing. For incon files, returns text-parsed index constituent data. For cfg files, returns pipe-delimited text data.
+      scenarios:
+        parse-block:
+          - GIVEN: A tdxdir with block_zs.dat in T0002/hq_cache/
+          - WHEN: baseParse.parse('block_zs', group=false) is called
+          - THEN: Returns parsed block data array with stock codes and block names
+        parse-incon:
+          - GIVEN: A tdxdir with incon.dat
+          - WHEN: baseParse.parse('incon') is called
+          - THEN: Returns parsed index constituent dict
+    customize-block:
+      strength: MUST
+      statement: 'Customize(tdxdir) manages custom blocks in T0002/blocknew/: create(name, symbol) writes .blk file and updates blocknew.cfg; search(name?) finds blocks; update(name, symbol) modifies existing block; remove(name) deletes block and cleans cfg'
+      scenarios:
+        create-block:
+          - GIVEN: A tdxdir with T0002/blocknew/ directory
+          - WHEN: customize.create('myblock', ['600036', '600016']) is called
+          - THEN: Creates timestamp.blk file with market-prefixed codes and updates blocknew.cfg
+        search-block:
+          - GIVEN: A tdxdir with existing custom blocks
+          - WHEN: customize.search('myblock') is called
+          - THEN: Returns array of stock codes in that block
+        remove-block:
+          - GIVEN: A tdxdir with existing custom block named myblock
+          - WHEN: customize.remove('myblock') is called
+          - THEN: Deletes .blk file and removes entry from blocknew.cfg
+    reader-block-methods:
+      strength: MUST
+      statement: StdReader.block(symbol, group?) delegates to BaseParse.parse() for reading block data files. Returns parsed block data or null if file not found.
+      scenarios:
+        read-block:
+          - GIVEN: A StdReader with tdxdir containing block files
+          - WHEN: stdReader.block('block_zs') is called
+          - THEN: Returns parsed block data from BaseParse
+  MODIFIED: {}
+  REMOVED: {}

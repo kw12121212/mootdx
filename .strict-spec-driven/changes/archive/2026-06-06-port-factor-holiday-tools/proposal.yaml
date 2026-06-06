@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-factor-holiday-tools
+  status: proposed
+summary:
+  what:
+    - Port factor data caching (utils/factor.py), holiday calendar with native JS execution (utils/holiday.py + holiday.js), TongHuaShun adjustment fetcher (contrib/adjust.py), TDX text-to-CSV converter (tools/tdx2csv.py), and batch financial downloader (tools/DownloadTDXCaiWu.py)
+  why:
+    - 'Complete milestone 0006-utils-adjust by porting all remaining data tools: factor caching, holiday calendar, third-party adjustment data, TDX file conversion, and batch financial downloads'
+scope:
+  in:
+    - mootdx/utils/factor.py, mootdx/utils/holiday.py, mootdx/utils/holiday.js, mootdx/contrib/adjust.py, mootdx/tools/tdx2csv.py, mootdx/tools/DownloadTDXCaiWu.py
+  out:
+    - mootdx-ts/src/utils/factor.ts, mootdx-ts/src/utils/holiday.ts, mootdx-ts/src/contrib/adjust.ts, mootdx-ts/src/tools/tdx2csv.ts, mootdx-ts/src/tools/DownloadTDXCaiWu.ts, mootdx-ts/src/index.ts
+unchanged_behavior:
+  - All existing modules (protocol, quotes, reader, financial, affair, tools/reversion, utils/adjust)
+roadmap:
+  milestone: 0006-utils-adjust
+  planned_change: port-factor-holiday-tools

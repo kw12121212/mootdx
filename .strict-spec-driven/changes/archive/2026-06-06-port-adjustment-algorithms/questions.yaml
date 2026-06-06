@@ -1,0 +1,12 @@
+schema: strict-spec-driven/question-list/v1
+schema_version: 1
+artifact_type: question_list
+schema_file: templates/strict-spec-driven/schemas/question-list.yaml
+change: port-adjustment-algorithms
+open: []
+resolved:
+  - id: factor-api
+    question: The Sina Finance factor API returns JSONP-like responses. Need to verify exact format and parsing.
+    context: fqFactor function fetches from finance.sina.com.cn
+    answer: 'The Sina Finance API returns JSONP: var hq_str_{symbol}_hfq={json_data} or var hq_str_{symbol}_qfq={json_data}. Parse by splitting on ''='' and taking the second part, then JSON.parse. The data field contains arrays of [date, factor_value].'
+    status: resolved

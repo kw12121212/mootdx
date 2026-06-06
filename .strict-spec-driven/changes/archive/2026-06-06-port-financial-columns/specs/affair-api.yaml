@@ -1,0 +1,47 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: affair-api
+mapping:
+  implementation:
+    - mootdx-ts/src/financial/columns.ts
+    - mootdx-ts/src/financial/financial.ts
+  tests:
+    - mootdx-ts/tests/financial.test.ts
+operations:
+  ADDED:
+    financial-columns:
+      strength: MUST
+      statement: columns.ts exports a string array of 583 Chinese column names used as field labels for binary financial data records
+      scenarios:
+        columns-count:
+          - GIVEN: The columns array is imported
+          - WHEN: columns.length is checked
+          - THEN: Returns 583
+    financial-reader:
+      strength: MUST
+      statement: FinancialReader.toData(filepath) reads .dat or .zip binary financial files, parses the header (report_date, max_count, report_size), iterates stock items (code + offset), and returns an array of objects with column names as keys
+      scenarios:
+        parse-dat:
+          - GIVEN: A .dat financial data file with N stock records
+          - WHEN: FinancialReader.toData(filepath) is called
+          - THEN: Returns array of objects with code, report_date, and 583 float fields keyed by column names
+    financial-list:
+      strength: MUST
+      statement: FinancialList.content() connects to TDX server, fetches tdxfin/gpcw.txt via getReportFileBySize, and parse() returns FinancialFile[] with filename, hash, and filesize fields
+      scenarios:
+        list-files:
+          - GIVEN: A TDX server connection is available
+          - WHEN: financialList.fetchAndParse() is called
+          - THEN: Returns array of FinancialFile objects with filename, hash, filesize
+    financial-download:
+      strength: MUST
+      statement: Financial.content(filename, downdir) downloads a financial file via getReportFileBySize to the specified directory, with optional progress callback
+      scenarios:
+        download-file:
+          - GIVEN: A TDX server connection and valid filename
+          - WHEN: financial.content(filename, downdir) is called
+          - THEN: Downloads the file to downdir and returns the file path
+  MODIFIED: {}
+  REMOVED: {}

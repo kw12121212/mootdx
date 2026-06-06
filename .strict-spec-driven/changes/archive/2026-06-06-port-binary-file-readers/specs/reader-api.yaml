@@ -1,0 +1,46 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: reader-api
+mapping:
+  implementation:
+    - mootdx-ts/src/reader.ts
+  tests:
+    - mootdx-ts/src/reader.test.ts
+operations:
+  ADDED:
+    binary-daily-reader:
+      strength: MUST
+      statement: parseDailyBars reads .day files with 32-byte records (date:U32, open:U32, high:U32, low:U32, close:U32, amount:F32, vol:U32, reserved:U32) and applies security-type-specific price coefficients
+      scenarios:
+        parse-daily:
+          - GIVEN: A .day binary file with N daily bar records
+          - WHEN: parseDailyBars(buffer, securityType) is called
+          - THEN: Returns OhlcBar[] with date strings (YYYY-MM-DD) and coefficient-adjusted OHLC prices and volumes
+    lc-minute-reader:
+      strength: MUST
+      statement: parseLCMinuteBars reads .lc1/.lc5 files with 32-byte records (date:U16 packed, time:U16, OHLC:F32 each, amount:F32, vol:U32) returning OhlcBar[] with datetime strings
+      scenarios:
+        parse-lc-minute:
+          - GIVEN: A .lc1 or .lc5 binary file with N minute bar records
+          - WHEN: parseLCMinuteBars(buffer) is called
+          - THEN: Returns OhlcBar[] with datetime strings (YYYY-MM-DD HH:MM) and float OHLC/amount/volume values
+    std-minute-reader:
+      strength: MUST
+      statement: parseMinuteBars reads .1/.5 files with 32-byte records (date:U16, time:U16, OHLC:U32/100 each, amount:F32, vol:U32) returning OhlcBar[] with prices divided by 100
+      scenarios:
+        parse-minute:
+          - GIVEN: A .1 or .5 binary file with N minute bar records
+          - WHEN: parseMinuteBars(buffer) is called
+          - THEN: Returns OhlcBar[] with datetime strings and OHLC prices as integer values divided by 100
+    reader-factory:
+      strength: MUST
+      statement: reader(market='std', tdxdir) returns StdReader; reader(market='ext', tdxdir) returns ExtReader; constructor throws if tdxdir directory does not exist
+      scenarios:
+        factory-selection:
+          - GIVEN: The reader() function is called with a market and tdxdir path
+          - WHEN: tdxdir exists
+          - THEN: Returns StdReader or ExtReader instance; if tdxdir does not exist, throws Error
+  MODIFIED: {}
+  REMOVED: {}

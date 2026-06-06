@@ -1,0 +1,19 @@
+schema: strict-spec-driven/change-design/v1
+schema_version: 1
+artifact_type: change_design
+schema_file: templates/strict-spec-driven/schemas/change-design.yaml
+change: port-block-customize
+approach:
+  - Port BaseParse as a class in parse.ts that reads block .dat files, .cfg text files (GBK-encoded), and incon.dat text files. Port Customize as a class in tools/customize.ts that manages .blk files and blocknew.cfg. Add block() and block_new() methods to StdReader.
+decisions:
+  block-reading:
+    decision: Reuse existing block protocol parsers for .dat binary block files; add local file reading wrapper
+    rationale: Python uses tdxpy BlockReader for .dat files; we already have equivalent binary parsing
+  cfg-format:
+    decision: Parse cfg files as GBK text with pipe-delimited fields, returned as string arrays
+    rationale: TypeScript has no DataFrame; return raw structured arrays
+  blk-format:
+    decision: Implement CustomerBlockReader logic inline in Customize class
+    rationale: The .blk format is straightforward and does not warrant a separate reader class
+alternatives: []
+risks: []

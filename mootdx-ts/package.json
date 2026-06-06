@@ -10,7 +10,7 @@
     }
   },
   "bin": {
-    "mootdx": "./dist/cli/index.js"
+    "mootdx": "./src/cli/index.ts"
   },
   "scripts": {
     "build": "bunup",
@@ -18,10 +18,10 @@
     "lint": "biome check ./src"
   },
   "dependencies": {
-    "p-retry": "^6.2.0",
-    "commander": "^13.1.0",
     "cli-progress": "^3.12.0",
-    "iconv-lite": "^0.6.3"
+    "commander": "^15.0.0",
+    "iconv-lite": "^0.6.3",
+    "p-retry": "^6.2.0"
   },
   "devDependencies": {
     "@types/bun": "latest",

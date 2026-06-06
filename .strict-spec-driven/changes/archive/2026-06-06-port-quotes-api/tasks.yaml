@@ -1,0 +1,42 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-quotes-api
+sections:
+  Implementation:
+    implement-base-quotes:
+      text: 'Create BaseQuotes abstract class with connection lifecycle: constructor (config.setup, server resolution, client creation), reconnect(), close(), closed property'
+      status: complete
+    implement-std-quotes:
+      text: 'Create StdQuotes class extending BaseQuotes with all 18 methods: traffic, quotes, bars, stockCount, stocks, stockAll, indexBars, minute, minutes, transaction, transactions, F10C, F10, xdxr, finance, k, ohlc, index, block'
+      status: complete
+    implement-ext-quotes:
+      text: 'Create ExtQuotes class extending BaseQuotes with all 11 methods (with retry): markets, instrument, instrumentCount, instruments, quote, minute, minutes, bars, transaction, transactions, validate'
+      status: complete
+    implement-factory:
+      text: Create quotes() factory function returning StdQuotes or ExtQuotes based on market param
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export Quotes API
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with quotes API tests
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify quotes.ts created with all 3 classes + factory, index.ts updated
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

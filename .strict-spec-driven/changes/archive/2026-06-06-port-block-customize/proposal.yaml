@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-block-customize
+  status: proposed
+summary:
+  what:
+    - Port block parser (BaseParse from parse.py) and custom block management (Customize from tools/customize.py) to TypeScript
+  why:
+    - Milestone 0004-reader requires block file parsing and custom block CRUD operations for .dat, .blk, and .cfg files
+scope:
+  in:
+    - mootdx-ts/src/parse.ts (BaseParse), mootdx-ts/src/tools/customize.ts (Customize), mootdx-ts/src/reader.ts (StdReader block/block_new methods)
+  out:
+    - Complete block parsing and custom block management in TypeScript, integrated with existing StdReader
+unchanged_behavior:
+  - Binary file parsers (parseDailyBars, parseLCMinuteBars, parseMinuteBars, parseExDailyBars), Quotes API, protocol modules
+roadmap:
+  milestone: 0004-reader
+  planned_change: port-block-customize

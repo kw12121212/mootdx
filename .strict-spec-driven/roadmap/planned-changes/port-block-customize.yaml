@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-block-customize
   milestone: 0004-reader
-status: planned
+status: complete
 summary: Port block parser (BaseParse) and custom block management (Customize)
 details: |
   mootdx-ts/src/parse.ts - Port from mootdx/parse.py:

@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-affair
   milestone: 0005-financial-affair
-status: planned
+status: complete
 summary: Port Affair orchestrator with async download, MD5 skip, and progress
 details: |
   mootdx-ts/src/affair.ts - Port from mootdx/affair.py.

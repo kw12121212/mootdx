@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-factor-holiday-tools
   milestone: 0006-utils-adjust
-status: planned
+status: complete
 summary: Port factor data, holiday calendar, contrib/adjust, tdx2csv, DownloadTDXCaiWu
 details: |
   mootdx-ts/src/utils/factor.ts - Port from mootdx/utils/factor.py:

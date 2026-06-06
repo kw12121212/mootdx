@@ -1,0 +1,33 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-affair
+sections:
+  Implementation:
+    implement-affair:
+      text: 'Port Affair class to mootdx-ts/src/affair.ts with static methods: files(), fetch(downdir, filename?), parse(downdir, filename). Include fetchFile helper with MD5 skip logic and Promise.all batch download.'
+      status: complete
+    update-exports:
+      text: Update mootdx-ts/src/index.ts to export Affair class.
+      status: complete
+  Testing:
+    run-build:
+      text: Run build validation.
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-quotes-api
   milestone: 0003-core-quotes
-status: planned
+status: complete
 summary: Port StdQuotes (18 methods) and ExtQuotes (11 methods) returning typed results
 details: |
   mootdx-ts/src/quotes.ts - Port from mootdx/quotes.py (769 lines).

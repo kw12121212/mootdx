@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-adjustment-algorithms
   milestone: 0006-utils-adjust
-status: planned
+status: complete
 summary: Port price adjustment pipeline (qfq/hfq) and tools/reversion.ts
 details: |
   mootdx-ts/src/tools/reversion.ts - Port from mootdx/tools/reversion.py (6.9KB).

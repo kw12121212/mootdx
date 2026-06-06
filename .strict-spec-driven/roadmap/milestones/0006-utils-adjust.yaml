@@ -36,7 +36,7 @@ risks:
   - Sina Finance factor data API may change; cache layer mitigates this
   - Adjustment algorithms have edge cases around dividend dates and split ratios
   - DownloadTDXCaiWu uses requests library in Python; port to fetch/httpx equivalent
-status: proposed
+status: complete
 notes:
   - holiday.js runs natively in TS - no mini_racer needed
   - This milestone depends on 0003 because adjustment pipeline calls Quotes.xdxr()

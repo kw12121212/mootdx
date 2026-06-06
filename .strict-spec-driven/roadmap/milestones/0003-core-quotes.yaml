@@ -31,7 +31,7 @@ risks:
   - 'Data format difference: Python returns pandas DataFrame, TS uses typed interfaces'
   - Server connectivity depends on external TDX servers being available
   - k() method has complex date-range pagination with trading day estimation
-status: proposed
+status: complete
 notes:
   - 'k() date-range pagination logic: first/last offsets adjusted by ~1/3 for non-trading days'
   - ExtQuotes extended market servers are currently unstable (Python warns about this)

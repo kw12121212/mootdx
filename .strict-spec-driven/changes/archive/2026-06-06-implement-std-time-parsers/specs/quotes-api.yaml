@@ -1,0 +1,82 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/protocol/minute_time.ts
+    - mootdx-ts/src/protocol/transaction.ts
+    - mootdx-ts/src/protocol/xdxr.ts
+    - mootdx-ts/src/protocol/finance.ts
+    - mootdx-ts/src/protocol/company_info.ts
+    - mootdx-ts/src/protocol/block.ts
+    - mootdx-ts/src/protocol/report_file.ts
+  tests:
+    - mootdx-ts/src/protocol/minute_time.test.ts
+    - mootdx-ts/src/protocol/transaction.test.ts
+    - mootdx-ts/src/protocol/xdxr.test.ts
+    - mootdx-ts/src/protocol/finance.test.ts
+    - mootdx-ts/src/protocol/company_info.test.ts
+    - mootdx-ts/src/protocol/block.test.ts
+    - mootdx-ts/src/protocol/report_file.test.ts
+operations:
+  ADDED:
+    minute-time-parser:
+      strength: MUST
+      statement: getMinuteTimeData(api, market, code) sends cmd 0x051d and returns MinuteData[] with price and volume; getHistoryMinuteTimeData(api, market, code, date) sends cmd 0x0fb4 and returns MinuteData[]
+      scenarios:
+        parse-minute-time:
+          - GIVEN: A binary response body containing N minute records with variable-length price and volume encoding
+          - WHEN: parseMinuteTimeResponse(body) is called
+          - THEN: Returns MinuteData[] with correct price (accumulated delta / 100) and vol fields
+    transaction-parser:
+      strength: MUST
+      statement: getTransactionData(api, market, code, start, count) sends cmd 0x0fc5 and returns Transaction[]; getHistoryTransactionData(api, market, code, start, count, date) sends cmd 0x0fb5 and returns Transaction[]
+      scenarios:
+        parse-transaction:
+          - GIVEN: A binary response body containing N transaction records with time, price, volume, trade count, and buy/sell flag
+          - WHEN: parseTransactionResponse(body) is called
+          - THEN: Returns Transaction[] with correct time string (HH:MM), price (accumulated delta / 100), vol, num, and buyOrSell fields
+    xdxr-parser:
+      strength: MUST
+      statement: getXdXrInfo(api, market, code) sends cmd 0x000f and returns XdxrRecord[] with category-dependent field decoding (dividend, rights issue, split, etc.)
+      scenarios:
+        parse-xdxr:
+          - GIVEN: A binary response body containing N ex-rights/ex-dividend records
+          - WHEN: parseXdxrResponse(body) is called
+          - THEN: Returns XdxrRecord[] with date, category, and category-specific fields (fenhong, peigujia, songzhuangu for dividends; suogu for splits; etc.)
+    finance-parser:
+      strength: MUST
+      statement: getFinanceInfo(api, market, code) sends cmd 0x0010 and returns FinanceInfo with 32 financial fields decoded from fixed-position binary struct
+      scenarios:
+        parse-finance:
+          - GIVEN: A binary response body containing a single financial record with 32 fields in fixed struct format
+          - WHEN: parseFinanceResponse(body) is called
+          - THEN: Returns FinanceInfo with all float fields scaled by 10000 and uint fields for dates/enums
+    company-info-parser:
+      strength: MUST
+      statement: getCompanyInfoCategory(api, market, code) sends cmd 0x02cf returning CompanyInfoCategory[]; getCompanyInfoContent(api, market, code, filename, start, length) sends cmd 0x02d0 returning GBK-decoded string
+      scenarios:
+        parse-company-info:
+          - GIVEN: A binary response body containing N F10 category records or a content record
+          - WHEN: parseCompanyInfoCategoryResponse or parseCompanyInfoContentResponse is called
+          - THEN: Returns CompanyInfoCategory[] with GBK-decoded names/filenames or the content string
+    block-parser:
+      strength: MUST
+      statement: getBlockInfoMeta(api, blockFile) sends cmd 0x02c5 returning size and hash; getBlockInfo(api, start, size, blockFile) sends cmd 0x06b9 returning raw block content for chunked download
+      scenarios:
+        parse-block-meta:
+          - GIVEN: A binary response body containing block metadata or block content
+          - WHEN: parseBlockInfoMetaResponse or parseBlockInfoResponse is called
+          - THEN: Returns {size, hash} metadata or raw block content bytes for sector/block definitions
+    report-file-parser:
+      strength: MUST
+      statement: getReportFileBySize(api, offset, size, filename) sends cmd 0x06b9 and returns {chunksize, chunkdata} for chunked financial file download in 30000-byte blocks
+      scenarios:
+        parse-report-file:
+          - GIVEN: A binary response body with a 4-byte chunksize prefix followed by raw data
+          - WHEN: parseReportFileResponse(body) is called
+          - THEN: 'Returns {chunksize: number, chunkdata: Buffer} where chunksize is 0 when no more data'
+  MODIFIED: {}
+  REMOVED: {}

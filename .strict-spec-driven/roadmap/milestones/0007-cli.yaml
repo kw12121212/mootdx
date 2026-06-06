@@ -35,7 +35,7 @@ dependencies:
 risks:
   - CLI UX should match Python version for existing users
   - Export formats need file-writing support (CSV, JSON, XLSX)
-status: proposed
+status: complete
 notes:
   - Consider publishing as npx-runnable tool for easy ad-hoc usage
   - 'Register bin in package.json: bin.mootdx -> ./dist/cli/index.js'

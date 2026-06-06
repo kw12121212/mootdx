@@ -1,0 +1,51 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-std-time-parsers
+sections:
+  Implementation:
+    implement-minute-time:
+      text: 'Create mootdx-ts/src/protocol/minute_time.ts: buildMinuteTimeRequest + parseMinuteTimeResponse, buildHistoryMinuteTimeRequest + parseHistoryMinuteTimeResponse returning MinuteData[]'
+      status: complete
+    implement-transaction:
+      text: 'Create mootdx-ts/src/protocol/transaction.ts: buildTransactionRequest + parseTransactionResponse, buildHistoryTransactionRequest + parseHistoryTransactionResponse returning Transaction[]'
+      status: complete
+    implement-xdxr:
+      text: 'Create mootdx-ts/src/protocol/xdxr.ts: buildXdxrRequest + parseXdxrResponse returning XdxrRecord[] with category-dependent field parsing'
+      status: complete
+    implement-finance:
+      text: 'Create mootdx-ts/src/protocol/finance.ts: buildFinanceRequest + parseFinanceResponse returning FinanceInfo with 32-field struct unpacking'
+      status: complete
+    implement-company-info:
+      text: 'Create mootdx-ts/src/protocol/company_info.ts: buildCompanyInfoCategoryRequest + parseCompanyInfoCategoryResponse returning CompanyInfoCategory[], buildCompanyInfoContentRequest + parseCompanyInfoContentResponse returning string'
+      status: complete
+    implement-block:
+      text: 'Create mootdx-ts/src/protocol/block.ts: buildBlockInfoMetaRequest + parseBlockInfoMetaResponse, buildBlockInfoRequest + parseBlockInfoResponse for sector/block definitions'
+      status: complete
+    implement-report-file:
+      text: 'Create mootdx-ts/src/protocol/report_file.ts: buildReportFileRequest + parseReportFileResponse for chunked financial file downloads'
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export all new parsers
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with new parser tests
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify all 7 parser files created and index.ts updated
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

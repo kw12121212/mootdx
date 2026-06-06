@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: port-financial-columns
   milestone: 0005-financial-affair
-status: planned
+status: complete
 summary: Port 583-column financial data definitions and binary parser
 details: |
   mootdx-ts/src/financial/columns.ts - Port from mootdx/financial/columns.py:

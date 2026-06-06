@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-financial-columns
+  status: proposed
+summary:
+  what:
+    - Port 583-column financial data definitions, binary .dat/.zip parser (FinancialReader), file listing (FinancialList), and single-file download (Financial) to TypeScript
+  why:
+    - Milestone 0005 requires financial data download and binary parsing with the 583-column layout
+scope:
+  in:
+    - mootdx-ts/src/financial/columns.ts (583 column names), mootdx-ts/src/financial/base.ts (BaseReader helpers), mootdx-ts/src/financial/financial.ts (FinancialReader, FinancialList, Financial)
+  out:
+    - Complete financial data module with column definitions, binary parser, file listing, and download capability
+unchanged_behavior:
+  - Quotes API, protocol modules, reader module, block/customize modules
+roadmap:
+  milestone: 0005-financial-affair
+  planned_change: port-financial-columns

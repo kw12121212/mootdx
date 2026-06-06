@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-binary-file-readers
+  status: proposed
+summary:
+  what:
+    - 'Port binary file readers: daily bar (.day), LC minute (.lc1/.lc5), standard minute (.1/.5), and extended market daily, plus ReaderBase with path resolution and StdReader/ExtReader classes'
+  why:
+    - Enables reading offline TDX data files from local installations without server connectivity
+scope:
+  in:
+    - mootdx-ts/src/reader.ts
+  out:
+    - ReaderBase with find_path, StdReader (daily/minute/fzline), ExtReader (daily/minute/fzline), 4 binary format parsers
+unchanged_behavior:
+  - All Python codebase, existing protocol parsers, quotes.ts, server.ts, config.ts
+roadmap:
+  milestone: 0004-reader
+  planned_change: port-binary-file-readers

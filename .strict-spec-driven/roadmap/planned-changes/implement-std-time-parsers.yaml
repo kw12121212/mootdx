@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: implement-std-time-parsers
   milestone: 0002-tdx-protocol
-status: planned
+status: complete
 summary: 'Implement time-series parsers: minute, transaction, xdxr, finance, company info, block'
 details: |
   mootdx-ts/src/protocol/minute_time.ts:

@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: port-cli-commands
+  status: proposed
+summary:
+  what:
+    - Port CLI commands (quotes, reader, bestip, affair, bundle) from Python click-based CLI to TypeScript Commander.js
+  why:
+    - Complete milestone 0007-cli by providing command-line interface for all ported functionality
+scope:
+  in:
+    - mootdx/__main__.py
+  out:
+    - mootdx-ts/src/cli/index.ts, mootdx-ts/package.json (bin field)
+unchanged_behavior:
+  - All library modules - CLI is a thin wrapper over existing APIs
+roadmap:
+  milestone: 0007-cli
+  planned_change: port-cli-commands

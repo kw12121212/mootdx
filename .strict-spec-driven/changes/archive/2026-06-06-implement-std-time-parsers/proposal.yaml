@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-std-time-parsers
+  status: proposed
+summary:
+  what:
+    - 'Implement time-series and info protocol parsers: minute time data, transaction data, xdxr info, finance info, company info, block info, and report file'
+  why:
+    - These parsers complete the standard market protocol layer, enabling intraday data, ex-rights info, financial summaries, F10 company data, sector/block definitions, and financial file downloads
+scope:
+  in:
+    - mootdx-ts/src/protocol/
+  out:
+    - 7 parser modules with typed request builders and response parsers for all standard time-series and info commands
+unchanged_behavior:
+  - All Python codebase, existing mootdx-ts modules, ext protocol parsers
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-std-time-parsers

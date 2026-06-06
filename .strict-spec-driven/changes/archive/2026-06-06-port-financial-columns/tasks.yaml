@@ -1,0 +1,45 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-financial-columns
+sections:
+  Implementation:
+    implement-columns:
+      text: Port 583 Chinese column names to mootdx-ts/src/financial/columns.ts as a string array constant.
+      status: complete
+    implement-base:
+      text: Port BaseReader to mootdx-ts/src/financial/base.ts with Buffer-based unpack helpers and BaseFinancial class with bestip resolution.
+      status: complete
+    implement-financial-reader:
+      text: 'Port FinancialReader to mootdx-ts/src/financial/financial.ts with binary .dat parsing: header, stock items, report fields as floats. Handle .zip extraction.'
+      status: complete
+    implement-financial-list:
+      text: Port FinancialList class that connects to TDX server via getReportFileBySize to fetch tdxfin/gpcw.txt, parse into FinancialFile[] array.
+      status: complete
+    implement-financial-download:
+      text: Port Financial class that downloads individual financial files via getReportFileBySize with progress callback support.
+      status: complete
+    update-exports:
+      text: Update mootdx-ts/src/index.ts to export financial module types and classes.
+      status: complete
+  Testing:
+    run-build:
+      text: Run build validation.
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

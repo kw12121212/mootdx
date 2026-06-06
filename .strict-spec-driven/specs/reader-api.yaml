@@ -12,29 +12,97 @@ mapping:
 requirements:
   R-001:
     strength: MUST
-    statement: "Reader.factory(market='std') returns StdReader; market='ext' returns ExtReader."
+    statement: Reader.factory(market='std') returns StdReader; market='ext' returns ExtReader.
     scenarios: {}
   R-002:
     strength: MUST
-    statement: "Constructor requires a valid tdxdir path; raises Exception if the directory does not exist."
+    statement: Constructor requires a valid tdxdir path; raises Exception if the directory does not exist.
     scenarios: {}
   R-003:
     strength: MUST
-    statement: "StdReader.daily(symbol) reads .day files from vipdoc/{market}/lday/ and returns a pandas DataFrame."
+    statement: StdReader.daily(symbol) reads .day files from vipdoc/{market}/lday/ and returns a pandas DataFrame.
     scenarios: {}
   R-004:
     strength: MUST
-    statement: "StdReader.minute(symbol, suffix=1) reads 1-minute .lc1/.1 files; suffix=5 reads 5-minute .lc5/.5 files from vipdoc/{market}/minline or fzline."
+    statement: StdReader.minute(symbol, suffix=1) reads 1-minute .lc1/.1 files; suffix=5 reads 5-minute .lc5/.5 files from vipdoc/{market}/minline or fzline.
     scenarios: {}
   R-005:
     strength: MUST
-    statement: "find_path auto-detects market (sh/sz) from symbol prefix; symbols starting with '88' map to sh; '#' prefix maps to ds (extended)."
+    statement: find_path auto-detects market (sh/sz) from symbol prefix; symbols starting with '88' map to sh; '#' prefix maps to ds (extended).
     scenarios: {}
   R-006:
     strength: MUST
-    statement: "ExtReader.daily/minute/fzline read extended-market data files using TdxExHqDailyBarReader."
+    statement: ExtReader.daily/minute/fzline read extended-market data files using TdxExHqDailyBarReader.
     scenarios: {}
   R-007:
     strength: MUST
-    statement: "All reader methods return None when the data file is not found."
+    statement: All reader methods return None when the data file is not found.
     scenarios: {}
+  binary-daily-reader:
+    strength: MUST
+    statement: parseDailyBars reads .day files with 32-byte records (date:U32, open:U32, high:U32, low:U32, close:U32, amount:F32, vol:U32, reserved:U32) and applies security-type-specific price coefficients
+    scenarios:
+      parse-daily:
+        - GIVEN: A .day binary file with N daily bar records
+        - WHEN: parseDailyBars(buffer, securityType) is called
+        - THEN: Returns OhlcBar[] with date strings (YYYY-MM-DD) and coefficient-adjusted OHLC prices and volumes
+  lc-minute-reader:
+    strength: MUST
+    statement: parseLCMinuteBars reads .lc1/.lc5 files with 32-byte records (date:U16 packed, time:U16, OHLC:F32 each, amount:F32, vol:U32) returning OhlcBar[] with datetime strings
+    scenarios:
+      parse-lc-minute:
+        - GIVEN: A .lc1 or .lc5 binary file with N minute bar records
+        - WHEN: parseLCMinuteBars(buffer) is called
+        - THEN: Returns OhlcBar[] with datetime strings (YYYY-MM-DD HH:MM) and float OHLC/amount/volume values
+  std-minute-reader:
+    strength: MUST
+    statement: parseMinuteBars reads .1/.5 files with 32-byte records (date:U16, time:U16, OHLC:U32/100 each, amount:F32, vol:U32) returning OhlcBar[] with prices divided by 100
+    scenarios:
+      parse-minute:
+        - GIVEN: A .1 or .5 binary file with N minute bar records
+        - WHEN: parseMinuteBars(buffer) is called
+        - THEN: Returns OhlcBar[] with datetime strings and OHLC prices as integer values divided by 100
+  reader-factory:
+    strength: MUST
+    statement: reader(market='std', tdxdir) returns StdReader; reader(market='ext', tdxdir) returns ExtReader; constructor throws if tdxdir directory does not exist
+    scenarios:
+      factory-selection:
+        - GIVEN: The reader() function is called with a market and tdxdir path
+        - WHEN: tdxdir exists
+        - THEN: Returns StdReader or ExtReader instance; if tdxdir does not exist, throws Error
+  block-parse:
+    strength: MUST
+    statement: BaseParse(tdxdir).parse(symbol, group?) reads block files from T0002/hq_cache/ or incon.dat, returning parsed block data. For block_*.dat files, delegates to binary block parsing. For incon files, returns text-parsed index constituent data. For cfg files, returns pipe-delimited text data.
+    scenarios:
+      parse-block:
+        - GIVEN: A tdxdir with block_zs.dat in T0002/hq_cache/
+        - WHEN: baseParse.parse('block_zs', group=false) is called
+        - THEN: Returns parsed block data array with stock codes and block names
+      parse-incon:
+        - GIVEN: A tdxdir with incon.dat
+        - WHEN: baseParse.parse('incon') is called
+        - THEN: Returns parsed index constituent dict
+  customize-block:
+    strength: MUST
+    statement: 'Customize(tdxdir) manages custom blocks in T0002/blocknew/: create(name, symbol) writes .blk file and updates blocknew.cfg; search(name?) finds blocks; update(name, symbol) modifies existing block; remove(name) deletes block and cleans cfg'
+    scenarios:
+      create-block:
+        - GIVEN: A tdxdir with T0002/blocknew/ directory
+        - WHEN: customize.create('myblock', ['600036', '600016']) is called
+        - THEN: Creates timestamp.blk file with market-prefixed codes and updates blocknew.cfg
+      search-block:
+        - GIVEN: A tdxdir with existing custom blocks
+        - WHEN: customize.search('myblock') is called
+        - THEN: Returns array of stock codes in that block
+      remove-block:
+        - GIVEN: A tdxdir with existing custom block named myblock
+        - WHEN: customize.remove('myblock') is called
+        - THEN: Deletes .blk file and removes entry from blocknew.cfg
+  reader-block-methods:
+    strength: MUST
+    statement: StdReader.block(symbol, group?) delegates to BaseParse.parse() for reading block data files. Returns parsed block data or null if file not found.
+    scenarios:
+      read-block:
+        - GIVEN: A StdReader with tdxdir containing block files
+        - WHEN: stdReader.block('block_zs') is called
+        - THEN: Returns parsed block data from BaseParse

@@ -1,0 +1,42 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: comprehensive-tests-and-docs
+sections:
+  Implementation:
+    add-protocol-tests:
+      text: Add tests for protocol helpers (getPrice, getVolume, getDatetime, getTime) and binary parsers (security_bars, index_bars, minute_time, transaction, xdxr, finance, company_info, block, report_file) using mock binary data.
+      status: complete
+    add-reversion-tests:
+      text: Add tests for tools/reversion.ts (factorReversion, dividendReversion, etfReversion, baoliQfq) with known inputs/outputs.
+      status: complete
+    add-utils-tests:
+      text: Add tests for utils (get_stock_market, get_frequency, md5sum, to_file), cache (file, timed), and config.
+      status: complete
+    add-reader-tests:
+      text: Add tests for reader (parseDailyBars, parseLCMinuteBars, parseMinuteBars, parseExDailyBars) with mock binary data.
+      status: complete
+    add-readme:
+      text: Create mootdx-ts/README.md with installation, quickstart, and API overview.
+      status: complete
+  Testing:
+    run-build:
+      text: Run build validation.
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

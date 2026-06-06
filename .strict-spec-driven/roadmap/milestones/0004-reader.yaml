@@ -34,7 +34,7 @@ risks:
   - Binary file format parsing must exactly match tdxpy struct sizes and alignment
   - Custom block (.blk) file format is undocumented; must port from tdxpy CustomerBlockReader
   - MooTdxDailyBarReader in contrib/compat.py has security type coefficient mapping
-status: proposed
+status: complete
 notes:
   - Reader does NOT depend on protocol engine - pure binary file parsing
   - Reuse existing tests/fixtures/ directory for binary test data

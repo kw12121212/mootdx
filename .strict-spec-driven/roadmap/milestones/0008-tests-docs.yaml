@@ -34,7 +34,7 @@ dependencies:
 risks:
   - Binary fixture compatibility between Python and TS must be verified byte-by-byte
   - Live server tests are flaky; rely on recorded fixtures
-status: proposed
+status: complete
 notes:
   - Fixture-based testing is critical for reliability
   - Record ~20 real request/response pairs during milestone 0002

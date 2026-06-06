@@ -84,3 +84,131 @@ requirements:
         - GIVEN: A binary response body containing N fixed-size security records with 6-byte code, U16 vol, and GBK name
         - WHEN: parseListResponse(body, market) is called
         - THEN: Returns SecurityInfo[] with decoded code strings, GBK-decoded name strings, and the supplied market value
+  ext-market-parsers:
+    strength: MUST
+    statement: Extended market parsers support futures/commodity data
+    scenarios:
+      ext-instrument-bars:
+        - GIVEN: a connected extended market API
+        - WHEN: getInstrumentBars is called
+        - THEN: ExtBar array is returned with OHLC data
+  minute-time-parser:
+    strength: MUST
+    statement: getMinuteTimeData(api, market, code) sends cmd 0x051d and returns MinuteData[] with price and volume; getHistoryMinuteTimeData(api, market, code, date) sends cmd 0x0fb4 and returns MinuteData[]
+    scenarios:
+      parse-minute-time:
+        - GIVEN: A binary response body containing N minute records with variable-length price and volume encoding
+        - WHEN: parseMinuteTimeResponse(body) is called
+        - THEN: Returns MinuteData[] with correct price (accumulated delta / 100) and vol fields
+  transaction-parser:
+    strength: MUST
+    statement: getTransactionData(api, market, code, start, count) sends cmd 0x0fc5 and returns Transaction[]; getHistoryTransactionData(api, market, code, start, count, date) sends cmd 0x0fb5 and returns Transaction[]
+    scenarios:
+      parse-transaction:
+        - GIVEN: A binary response body containing N transaction records with time, price, volume, trade count, and buy/sell flag
+        - WHEN: parseTransactionResponse(body) is called
+        - THEN: Returns Transaction[] with correct time string (HH:MM), price (accumulated delta / 100), vol, num, and buyOrSell fields
+  xdxr-parser:
+    strength: MUST
+    statement: getXdXrInfo(api, market, code) sends cmd 0x000f and returns XdxrRecord[] with category-dependent field decoding (dividend, rights issue, split, etc.)
+    scenarios:
+      parse-xdxr:
+        - GIVEN: A binary response body containing N ex-rights/ex-dividend records
+        - WHEN: parseXdxrResponse(body) is called
+        - THEN: Returns XdxrRecord[] with date, category, and category-specific fields (fenhong, peigujia, songzhuangu for dividends; suogu for splits; etc.)
+  finance-parser:
+    strength: MUST
+    statement: getFinanceInfo(api, market, code) sends cmd 0x0010 and returns FinanceInfo with 32 financial fields decoded from fixed-position binary struct
+    scenarios:
+      parse-finance:
+        - GIVEN: A binary response body containing a single financial record with 32 fields in fixed struct format
+        - WHEN: parseFinanceResponse(body) is called
+        - THEN: Returns FinanceInfo with all float fields scaled by 10000 and uint fields for dates/enums
+  company-info-parser:
+    strength: MUST
+    statement: getCompanyInfoCategory(api, market, code) sends cmd 0x02cf returning CompanyInfoCategory[]; getCompanyInfoContent(api, market, code, filename, start, length) sends cmd 0x02d0 returning GBK-decoded string
+    scenarios:
+      parse-company-info:
+        - GIVEN: A binary response body containing N F10 category records or a content record
+        - WHEN: parseCompanyInfoCategoryResponse or parseCompanyInfoContentResponse is called
+        - THEN: Returns CompanyInfoCategory[] with GBK-decoded names/filenames or the content string
+  block-parser:
+    strength: MUST
+    statement: getBlockInfoMeta(api, blockFile) sends cmd 0x02c5 returning size and hash; getBlockInfo(api, start, size, blockFile) sends cmd 0x06b9 returning raw block content for chunked download
+    scenarios:
+      parse-block-meta:
+        - GIVEN: A binary response body containing block metadata or block content
+        - WHEN: parseBlockInfoMetaResponse or parseBlockInfoResponse is called
+        - THEN: Returns {size, hash} metadata or raw block content bytes for sector/block definitions
+  report-file-parser:
+    strength: MUST
+    statement: getReportFileBySize(api, offset, size, filename) sends cmd 0x06b9 and returns {chunksize, chunkdata} for chunked financial file download in 30000-byte blocks
+    scenarios:
+      parse-report-file:
+        - GIVEN: A binary response body with a 4-byte chunksize prefix followed by raw data
+        - WHEN: parseReportFileResponse(body) is called
+        - THEN: 'Returns {chunksize: number, chunkdata: Buffer} where chunksize is 0 when no more data'
+  quotes-factory:
+    strength: MUST
+    statement: quotes(market='std') returns a StdQuotes instance; quotes(market='ext') returns an ExtQuotes instance; both auto-connect to a resolved server
+    scenarios:
+      factory-selection:
+        - GIVEN: The quotes() function is called with a market parameter
+        - WHEN: market is 'std' or 'ext'
+        - THEN: Returns the corresponding StdQuotes or ExtQuotes instance connected to a server
+  std-quotes-methods:
+    strength: MUST
+    statement: StdQuotes exposes 18 typed methods (bars, quotes, index, indexBars, minute, minutes, transaction, transactions, xdxr, finance, stockCount, stocks, stockAll, F10C, F10, k, ohlc, block) that wrap protocol parsers and return typed results
+    scenarios:
+      std-methods-return-typed:
+        - GIVEN: A connected StdQuotes instance
+        - WHEN: Any of the 18 public methods is called with valid parameters
+        - THEN: Returns typed data structures (OhlcBar[], Quote[], XdxrRecord[], etc.) matching the types.ts interfaces
+  ext-quotes-retry:
+    strength: MUST
+    statement: ExtQuotes methods retry up to 3 times with random wait (1-10s) on empty results or exceptions, reconnecting between attempts
+    scenarios:
+      ext-retry-on-empty:
+        - GIVEN: A connected ExtQuotes instance and a method that returns empty results
+        - WHEN: The method is called
+        - THEN: Retries up to 3 times with random wait between attempts; returns data if successful within 3 attempts
+  k-date-range:
+    strength: MUST
+    statement: k(symbol, begin, end) returns K-line data for the specified date range using trading-day estimation pagination (first offset adjusted by /2.8, last by /3.5)
+    scenarios:
+      k-pagination:
+        - GIVEN: A connected StdQuotes instance and a date range
+        - WHEN: k() is called with begin and end dates
+        - THEN: Returns OhlcBar[] for the specified date range using offset estimation to handle non-trading days
+  base-quotes-lifecycle:
+    strength: MUST
+    statement: 'BaseQuotes handles connection lifecycle: auto-connects on construction, reconnect() reconnects if closed, close() disconnects, closed property reflects connection state'
+    scenarios:
+      lifecycle:
+        - GIVEN: A BaseQuotes subclass instance
+        - WHEN: Connection lifecycle methods are called
+        - THEN: Config is loaded, server resolved, client connected; reconnect restores connection; close disconnects; closed reflects state
+  price-adjustment:
+    strength: MUST
+    statement: reversion(symbol, data, xdxr, type) dispatches to factorReversion, _reversion, or etfReversion based on symbol prefix and adjustment type (qfq/hfq). Returns adjusted OhlcBar[] with corrected OHLC prices and volumes.
+    scenarios:
+      qfq-adjust:
+        - GIVEN: OhlcBar[] data with xdxr dividend records
+        - WHEN: reversion(symbol, data, xdxr, 'qfq') is called
+        - THEN: Returns OhlcBar[] with forward-adjusted prices
+  adjust-dispatcher:
+    strength: MUST
+    statement: toAdjust(data, symbol, adjust) fetches xdxr data via StdQuotes and applies reversion. toAdjust2(data, symbol, adjust) uses Sina Finance factor data for adjustment.
+    scenarios:
+      adjust-qfq:
+        - GIVEN: OhlcBar[] data and a valid symbol
+        - WHEN: toAdjust(data, symbol, 'qfq') is called
+        - THEN: Returns forward-adjusted OhlcBar[]
+  factor-cache:
+    strength: MUST
+    statement: fqFactor fetches qfq/hfq factors from Sina Finance API and caches to JSON file with 24h TTL
+    scenarios:
+      factor-fetch:
+        - GIVEN: a valid symbol and method
+        - WHEN: fqFactor is called
+        - THEN: returns FactorRecord array with date and factor values

@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: comprehensive-tests-and-docs
   milestone: 0008-tests-docs
-status: planned
+status: complete
 summary: Write comprehensive test suite and publish documentation
 details: |
   Test suite in mootdx-ts/tests/ using Bun test runner.

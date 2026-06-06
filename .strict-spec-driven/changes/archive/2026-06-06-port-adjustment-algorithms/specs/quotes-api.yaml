@@ -1,0 +1,32 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/tools/reversion.ts
+    - mootdx-ts/src/utils/adjust.ts
+  tests:
+    - mootdx-ts/tests/reversion.test.ts
+    - mootdx-ts/tests/adjust.test.ts
+operations:
+  ADDED:
+    price-adjustment:
+      strength: MUST
+      statement: reversion(symbol, data, xdxr, type) dispatches to factorReversion, _reversion, or etfReversion based on symbol prefix and adjustment type (qfq/hfq). Returns adjusted OhlcBar[] with corrected OHLC prices and volumes.
+      scenarios:
+        qfq-adjust:
+          - GIVEN: OhlcBar[] data with xdxr dividend records
+          - WHEN: reversion(symbol, data, xdxr, 'qfq') is called
+          - THEN: Returns OhlcBar[] with forward-adjusted prices
+    adjust-dispatcher:
+      strength: MUST
+      statement: toAdjust(data, symbol, adjust) fetches xdxr data via StdQuotes and applies reversion. toAdjust2(data, symbol, adjust) uses Sina Finance factor data for adjustment.
+      scenarios:
+        adjust-qfq:
+          - GIVEN: OhlcBar[] data and a valid symbol
+          - WHEN: toAdjust(data, symbol, 'qfq') is called
+          - THEN: Returns forward-adjusted OhlcBar[]
+  MODIFIED: {}
+  REMOVED: {}

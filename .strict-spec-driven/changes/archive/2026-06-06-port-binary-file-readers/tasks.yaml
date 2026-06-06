@@ -1,0 +1,33 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-binary-file-readers
+sections:
+  Implementation:
+    implement-reader:
+      text: Create mootdx-ts/src/reader.ts with ReaderBase (find_path, path resolution), 4 binary format parsers (daily .day, LC minute .lc1/.lc5, minute .1/.5, extended daily), StdReader, ExtReader, reader() factory, security type detection with coefficients
+      status: complete
+    update-index:
+      text: Update mootdx-ts/src/index.ts to re-export reader API
+      status: complete
+  Testing:
+    run-build:
+      text: bun run build succeeds
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: bun run lint passes
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: bun test passes with reader tests
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify reader.ts created with all parsers + factory, index.ts updated
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

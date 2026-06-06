@@ -1,0 +1,45 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: port-factor-holiday-tools
+sections:
+  Implementation:
+    implement-factor:
+      text: Port utils/factor.ts with fqFactor (Sina Finance API fetch + JSON file cache).
+      status: complete
+    implement-holiday:
+      text: Port utils/holiday.ts with holidays, holiday, holiday2 functions using native holiday.js execution.
+      status: complete
+    implement-contrib-adjust:
+      text: Port contrib/adjust.ts with getAdjustYear (TongHuaShun fetcher with regex parsing).
+      status: complete
+    implement-tdx2csv:
+      text: Port tools/tdx2csv.ts with txt2csv (GBK text to CSV) and batch conversion.
+      status: complete
+    implement-download:
+      text: Port tools/DownloadTDXCaiWu.ts with batch download, MD5 verification, chunked concurrency.
+      status: complete
+    update-exports:
+      text: Update mootdx-ts/src/index.ts to export all new modules.
+      status: complete
+  Testing:
+    run-build:
+      text: Run build validation.
+      status: complete
+      command: cd mootdx-ts && bun run build
+    run-lint:
+      text: Run lint checks.
+      status: complete
+      command: cd mootdx-ts && bun run lint
+    run-tests:
+      text: Run unit tests.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope.
+      status: complete
+testing_gates:
+  validation_task: run-build
+  unit_test_task: run-tests

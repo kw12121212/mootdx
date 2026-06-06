@@ -1,0 +1,54 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/quotes.ts
+  tests:
+    - mootdx-ts/src/quotes.test.ts
+operations:
+  ADDED:
+    quotes-factory:
+      strength: MUST
+      statement: quotes(market='std') returns a StdQuotes instance; quotes(market='ext') returns an ExtQuotes instance; both auto-connect to a resolved server
+      scenarios:
+        factory-selection:
+          - GIVEN: The quotes() function is called with a market parameter
+          - WHEN: market is 'std' or 'ext'
+          - THEN: Returns the corresponding StdQuotes or ExtQuotes instance connected to a server
+    std-quotes-methods:
+      strength: MUST
+      statement: StdQuotes exposes 18 typed methods (bars, quotes, index, indexBars, minute, minutes, transaction, transactions, xdxr, finance, stockCount, stocks, stockAll, F10C, F10, k, ohlc, block) that wrap protocol parsers and return typed results
+      scenarios:
+        std-methods-return-typed:
+          - GIVEN: A connected StdQuotes instance
+          - WHEN: Any of the 18 public methods is called with valid parameters
+          - THEN: Returns typed data structures (OhlcBar[], Quote[], XdxrRecord[], etc.) matching the types.ts interfaces
+    ext-quotes-retry:
+      strength: MUST
+      statement: ExtQuotes methods retry up to 3 times with random wait (1-10s) on empty results or exceptions, reconnecting between attempts
+      scenarios:
+        ext-retry-on-empty:
+          - GIVEN: A connected ExtQuotes instance and a method that returns empty results
+          - WHEN: The method is called
+          - THEN: Retries up to 3 times with random wait between attempts; returns data if successful within 3 attempts
+    k-date-range:
+      strength: MUST
+      statement: k(symbol, begin, end) returns K-line data for the specified date range using trading-day estimation pagination (first offset adjusted by /2.8, last by /3.5)
+      scenarios:
+        k-pagination:
+          - GIVEN: A connected StdQuotes instance and a date range
+          - WHEN: k() is called with begin and end dates
+          - THEN: Returns OhlcBar[] for the specified date range using offset estimation to handle non-trading days
+    base-quotes-lifecycle:
+      strength: MUST
+      statement: 'BaseQuotes handles connection lifecycle: auto-connects on construction, reconnect() reconnects if closed, close() disconnects, closed property reflects connection state'
+      scenarios:
+        lifecycle:
+          - GIVEN: A BaseQuotes subclass instance
+          - WHEN: Connection lifecycle methods are called
+          - THEN: Config is loaded, server resolved, client connected; reconnect restores connection; close disconnects; closed reflects state
+  MODIFIED: {}
+  REMOVED: {}
