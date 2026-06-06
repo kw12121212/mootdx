@@ -1,31 +1,33 @@
-schema: strict-spec-driven/spec/v1
+schema: strict-spec-driven/main-spec/v1
 schema_version: 1
-artifact_type: spec
+artifact_type: main_spec
+schema_file: ../schemas/main-spec.yaml
 spec:
   id: affair-api
   title: Financial Data Download & Parse (Affair)
-  status: active
 mapping:
-  source_paths:
+  implementation:
     - mootdx/affair.py
     - mootdx/financial/
+  tests: []
 requirements:
-  - id: A-001
-    statement: Affair.files() returns a list of available financial report files from the remote server, each with filename and hash fields.
-    severity: MUST
-
-  - id: A-002
-    statement: Affair.fetch(downdir, filename) downloads a single financial report file with progress bar to the specified directory.
-    severity: MUST
-
-  - id: A-003
-    statement: Affair.fetch(downdir) without filename downloads all available financial files asynchronously, skipping files whose MD5 matches existing ones.
-    severity: MUST
-
-  - id: A-004
-    statement: Affair.parse(downdir, filename) downloads (if needed) and parses a financial report file, returning structured data.
-    severity: MUST
-
-  - id: A-005
-    statement: If downdir does not exist, it is created automatically.
-    severity: MUST
+  A-001:
+    strength: MUST
+    statement: "Affair.files() returns a list of available financial report files from the remote server, each with filename and hash fields."
+    scenarios: {}
+  A-002:
+    strength: MUST
+    statement: "Affair.fetch(downdir, filename) downloads a single financial report file with progress bar to the specified directory."
+    scenarios: {}
+  A-003:
+    strength: MUST
+    statement: "Affair.fetch(downdir) without filename downloads all available financial files asynchronously, skipping files whose MD5 matches existing ones."
+    scenarios: {}
+  A-004:
+    strength: MUST
+    statement: "Affair.parse(downdir, filename) downloads (if needed) and parses a financial report file, returning structured data."
+    scenarios: {}
+  A-005:
+    strength: MUST
+    statement: "If downdir does not exist, it is created automatically."
+    scenarios: {}

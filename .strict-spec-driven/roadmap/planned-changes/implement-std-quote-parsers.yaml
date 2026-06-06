@@ -5,7 +5,7 @@ schema_file: ../schemas/planned-change.yaml
 planned_change:
   id: implement-std-quote-parsers
   milestone: 0002-tdx-protocol
-status: planned
+status: complete
 summary: 'Implement real-time parsers: get_security_quotes (0x053e) and market enumeration'
 details: |
   mootdx-ts/src/protocol/security_quotes.ts:

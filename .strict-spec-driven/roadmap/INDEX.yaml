@@ -10,7 +10,7 @@ milestones:
   0002-tdx-protocol:
     title: TDX binary protocol engine
     path: roadmap/milestones/0002-tdx-protocol.yaml
-    status: proposed
+    status: active
   0003-core-quotes:
     title: Quotes API (StdQuotes + ExtQuotes)
     path: roadmap/milestones/0003-core-quotes.yaml

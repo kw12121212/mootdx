@@ -1,0 +1,12 @@
+schema: strict-spec-driven/question-list/v1
+schema_version: 1
+artifact_type: question_list
+schema_file: templates/strict-spec-driven/schemas/question-list.yaml
+change: implement-std-quote-parsers
+open: []
+resolved:
+  - id: gbk-decode
+    question: Should GBK string decoding use iconv-lite (external dep) or a lightweight built-in approach for security_list name fields?
+    context: security_list.ts needs to decode stock names from GBK. The project currently has no GBK decoding dependency. Bun/Node have limited native GBK support.
+    answer: Use iconv-lite for GBK decoding — standard Node/Bun-compatible library, no native bindings needed.
+    status: resolved

@@ -1,0 +1,22 @@
+schema: strict-spec-driven/change-proposal/v1
+schema_version: 1
+artifact_type: change_proposal
+schema_file: templates/strict-spec-driven/schemas/change-proposal.yaml
+change:
+  id: implement-std-quote-parsers
+  status: proposed
+summary:
+  what:
+    - 'Implement three standard-market protocol parsers: get_security_quotes (0x053e) for real-time 5-level order book data, get_security_count (0x044e) for security count by market, and get_security_list (0x0450) for paginated security enumeration with GBK name decoding'
+  why:
+    - These parsers complete the real-time market data layer needed by the Quotes API. The Quote and SecurityInfo types are already defined in types.ts, and the protocol foundation (socket, base API, helpers) is already implemented and archived.
+scope:
+  in:
+    - mootdx-ts/src/protocol/security_quotes.ts, mootdx-ts/src/protocol/security_count.ts, mootdx-ts/src/protocol/security_list.ts
+  out:
+    - Typed functions that build binary requests, parse binary responses, and return Quote[]/number/SecurityInfo[] via the existing TdxBaseApi.sendRequest pattern
+unchanged_behavior:
+  - Existing security_bars.ts, base.ts, socket.ts, helpers.ts, types.ts, login.ts, heartbeat.ts — no modifications needed
+roadmap:
+  milestone: 0002-tdx-protocol
+  planned_change: implement-std-quote-parsers

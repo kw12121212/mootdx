@@ -1,0 +1,37 @@
+schema: strict-spec-driven/task-list/v2
+schema_version: 2
+artifact_type: task_list
+schema_file: templates/strict-spec-driven/schemas/task-list.yaml
+change: implement-std-quote-parsers
+sections:
+  Implementation:
+    implement-security-quotes:
+      text: Implement security_quotes.ts — buildQuotesRequest(), parseQuotesResponse(), getSecurityQuotes() for cmd 0x053e with 5-level bid/ask parsing using getPrice().
+      status: complete
+    implement-security-count:
+      text: Implement security_count.ts — buildCountRequest(), parseCountResponse(), getSecurityCount() for cmd 0x044e returning U16 count.
+      status: complete
+    implement-security-list:
+      text: Implement security_list.ts — buildListRequest(), parseListResponse(), getSecurityList() for cmd 0x0450 with GBK name decoding and pagination support.
+      status: complete
+  Testing:
+    test-security-quotes:
+      text: Write unit tests for security_quotes — verify request buffer layout, parse response with known fixture data, check 5-level quote fields and price reconstruction.
+      status: complete
+    test-security-count:
+      text: Write unit tests for security_count — verify request buffer layout and response parsing for a single U16 count.
+      status: complete
+    test-security-list:
+      text: Write unit tests for security_list — verify request buffer layout, response parsing with fixed-size records, and GBK name decoding.
+      status: complete
+    run-tests:
+      text: Run full test suite.
+      status: complete
+      command: cd mootdx-ts && bun test
+  Verification:
+    verify-scope:
+      text: Verify implementation matches proposal scope — three parser modules, no modifications to existing files.
+      status: complete
+testing_gates:
+  validation_task: test-security-quotes
+  unit_test_task: run-tests

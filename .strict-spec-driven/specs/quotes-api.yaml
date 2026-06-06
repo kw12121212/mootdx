@@ -1,60 +1,86 @@
-schema: strict-spec-driven/spec/v1
+schema: strict-spec-driven/main-spec/v1
 schema_version: 1
-artifact_type: spec
+artifact_type: main_spec
+schema_file: ../schemas/main-spec.yaml
 spec:
   id: quotes-api
   title: Online Quotes API (StdQuotes / ExtQuotes)
-  status: active
 mapping:
-  source_paths:
+  implementation:
     - mootdx/quotes.py
     - mootdx/server.py
     - mootdx/consts.py
+  tests: []
 requirements:
-  - id: Q-001
+  Q-001:
+    strength: MUST
     statement: Quotes.factory(market='std') returns a StdQuotes instance; market='ext' returns an ExtQuotes instance.
-    severity: MUST
-
-  - id: Q-002
+    scenarios: {}
+  Q-002:
+    strength: MUST
     statement: StdQuotes connects to a TDX standard-market server on construction, using configured or auto-detected best IP.
-    severity: MUST
-
-  - id: Q-003
+    scenarios: {}
+  Q-003:
+    strength: MUST
     statement: bars() returns daily/minute K-line data as a pandas DataFrame with columns open/high/low/close/vol/amount, capped at 800 rows per call.
-    severity: MUST
-
-  - id: Q-004
+    scenarios: {}
+  Q-004:
+    strength: MUST
     statement: quotes() accepts a single symbol string or list and returns real-time quote data as a DataFrame.
-    severity: MUST
-
-  - id: Q-005
+    scenarios: {}
+  Q-005:
+    strength: MUST
     statement: index() and index_bars() return index K-line data, auto-detecting market (SH/SZ) from symbol prefix.
-    severity: MUST
-
-  - id: Q-006
+    scenarios: {}
+  Q-006:
+    strength: MUST
     statement: minute()/minutes() return intraday time-share data for standard market symbols; date parameter defaults to today for minute().
-    severity: MUST
-
-  - id: Q-007
+    scenarios: {}
+  Q-007:
+    strength: MUST
     statement: ExtQuotes methods (markets, instrument, quote, bars, minute, transaction) all retry up to 3 times with random wait on empty results or exceptions.
-    severity: MUST
-
-  - id: Q-008
+    scenarios: {}
+  Q-008:
+    strength: MUST
     statement: ExtQuotes.validate() parses market from symbol when formatted as "market#symbol", raising ValueError if market is empty.
-    severity: MUST
-
-  - id: Q-009
+    scenarios: {}
+  Q-009:
+    strength: MUST
     statement: xdxr() returns ex-rights/ex-dividend information as a DataFrame.
-    severity: MUST
-
-  - id: Q-010
+    scenarios: {}
+  Q-010:
+    strength: MUST
     statement: finance() returns financial summary for a given symbol as a DataFrame.
-    severity: MUST
-
-  - id: Q-011
+    scenarios: {}
+  Q-011:
+    strength: MUST
     statement: stock_count() and stocks() enumerate securities on SH (market=0) or SZ (market=1); stocks paginates in batches of 1000.
-    severity: MUST
-
-  - id: Q-012
+    scenarios: {}
+  Q-012:
+    strength: MUST
     statement: Passing an invalid market code (not 0/1/2 where applicable) raises MootdxValidationException.
-    severity: MUST
+    scenarios: {}
+  quote-parser-053e:
+    strength: MUST
+    statement: getSecurityQuotes(api, markets, codes) sends cmd 0x053e and returns Quote[] with 5-level bid/ask data, using getPrice() for relative price reconstruction
+    scenarios:
+      parse-realtime-quotes:
+        - GIVEN: A binary response body containing N stock quote records with 5-level order book data
+        - WHEN: parseQuotesResponse(body) is called
+        - THEN: Returns Quote[] with correct price/volume fields for each stock, where bid/ask prices are reconstructed using getPrice relative to last_close
+  count-parser-044e:
+    strength: MUST
+    statement: getSecurityCount(api, market) sends cmd 0x044e and returns the number of securities on the given market
+    scenarios:
+      parse-security-count:
+        - GIVEN: A binary response body containing a single U16 count value
+        - WHEN: parseCountResponse(body) is called
+        - THEN: Returns the count as a number
+  list-parser-0450:
+    strength: MUST
+    statement: getSecurityList(api, market, start) sends cmd 0x0450 and returns SecurityInfo[] with code, name (GBK-decoded), and market for each security
+    scenarios:
+      parse-security-list:
+        - GIVEN: A binary response body containing N fixed-size security records with 6-byte code, U16 vol, and GBK name
+        - WHEN: parseListResponse(body, market) is called
+        - THEN: Returns SecurityInfo[] with decoded code strings, GBK-decoded name strings, and the supplied market value

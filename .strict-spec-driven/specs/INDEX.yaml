@@ -2,4 +2,13 @@ schema: strict-spec-driven/spec-index/v1
 schema_version: 1
 artifact_type: spec_index
 schema_file: ../schemas/spec-index.yaml
-specs: []
+specs:
+  - id: affair-api
+    title: Financial Data Download & Parse (Affair)
+    path: .strict-spec-driven/specs/affair-api.yaml
+  - id: quotes-api
+    title: Online Quotes API (StdQuotes / ExtQuotes)
+    path: .strict-spec-driven/specs/quotes-api.yaml
+  - id: reader-api
+    title: Offline Reader API (StdReader / ExtReader)
+    path: .strict-spec-driven/specs/reader-api.yaml

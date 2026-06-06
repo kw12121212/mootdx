@@ -1,0 +1,42 @@
+schema: strict-spec-driven/delta-spec/v1
+schema_version: 1
+artifact_type: delta_spec
+schema_file: templates/strict-spec-driven/schemas/delta-spec.yaml
+target_spec: quotes-api
+mapping:
+  implementation:
+    - mootdx-ts/src/protocol/security_quotes.ts
+    - mootdx-ts/src/protocol/security_count.ts
+    - mootdx-ts/src/protocol/security_list.ts
+  tests:
+    - mootdx-ts/src/protocol/security_quotes.test.ts
+    - mootdx-ts/src/protocol/security_count.test.ts
+    - mootdx-ts/src/protocol/security_list.test.ts
+operations:
+  ADDED:
+    quote-parser-053e:
+      strength: MUST
+      statement: getSecurityQuotes(api, markets, codes) sends cmd 0x053e and returns Quote[] with 5-level bid/ask data, using getPrice() for relative price reconstruction
+      scenarios:
+        parse-realtime-quotes:
+          - GIVEN: A binary response body containing N stock quote records with 5-level order book data
+          - WHEN: parseQuotesResponse(body) is called
+          - THEN: Returns Quote[] with correct price/volume fields for each stock, where bid/ask prices are reconstructed using getPrice relative to last_close
+    count-parser-044e:
+      strength: MUST
+      statement: getSecurityCount(api, market) sends cmd 0x044e and returns the number of securities on the given market
+      scenarios:
+        parse-security-count:
+          - GIVEN: A binary response body containing a single U16 count value
+          - WHEN: parseCountResponse(body) is called
+          - THEN: Returns the count as a number
+    list-parser-0450:
+      strength: MUST
+      statement: getSecurityList(api, market, start) sends cmd 0x0450 and returns SecurityInfo[] with code, name (GBK-decoded), and market for each security
+      scenarios:
+        parse-security-list:
+          - GIVEN: A binary response body containing N fixed-size security records with 6-byte code, U16 vol, and GBK name
+          - WHEN: parseListResponse(body, market) is called
+          - THEN: Returns SecurityInfo[] with decoded code strings, GBK-decoded name strings, and the supplied market value
+  MODIFIED: {}
+  REMOVED: {}

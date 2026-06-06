@@ -1,38 +1,40 @@
-schema: strict-spec-driven/spec/v1
+schema: strict-spec-driven/main-spec/v1
 schema_version: 1
-artifact_type: spec
+artifact_type: main_spec
+schema_file: ../schemas/main-spec.yaml
 spec:
   id: reader-api
   title: Offline Reader API (StdReader / ExtReader)
-  status: active
 mapping:
-  source_paths:
+  implementation:
     - mootdx/reader.py
+  tests: []
 requirements:
-  - id: R-001
-    statement: Reader.factory(market='std') returns StdReader; market='ext' returns ExtReader.
-    severity: MUST
-
-  - id: R-002
-    statement: Constructor requires a valid tdxdir path; raises Exception if the directory does not exist.
-    severity: MUST
-
-  - id: R-003
-    statement: StdReader.daily(symbol) reads .day files from vipdoc/{market}/lday/ and returns a pandas DataFrame.
-    severity: MUST
-
-  - id: R-004
-    statement: StdReader.minute(symbol, suffix=1) reads 1-minute .lc1/.1 files; suffix=5 reads 5-minute .lc5/.5 files from vipdoc/{market}/minline or fzline.
-    severity: MUST
-
-  - id: R-005
-    statement: find_path auto-detects market (sh/sz) from symbol prefix; symbols starting with '88' map to sh; '#' prefix maps to ds (extended).
-    severity: MUST
-
-  - id: R-006
-    statement: ExtReader.daily/minute/fzline read extended-market data files using TdxExHqDailyBarReader.
-    severity: MUST
-
-  - id: R-007
-    statement: All reader methods return None when the data file is not found.
-    severity: MUST
+  R-001:
+    strength: MUST
+    statement: "Reader.factory(market='std') returns StdReader; market='ext' returns ExtReader."
+    scenarios: {}
+  R-002:
+    strength: MUST
+    statement: "Constructor requires a valid tdxdir path; raises Exception if the directory does not exist."
+    scenarios: {}
+  R-003:
+    strength: MUST
+    statement: "StdReader.daily(symbol) reads .day files from vipdoc/{market}/lday/ and returns a pandas DataFrame."
+    scenarios: {}
+  R-004:
+    strength: MUST
+    statement: "StdReader.minute(symbol, suffix=1) reads 1-minute .lc1/.1 files; suffix=5 reads 5-minute .lc5/.5 files from vipdoc/{market}/minline or fzline."
+    scenarios: {}
+  R-005:
+    strength: MUST
+    statement: "find_path auto-detects market (sh/sz) from symbol prefix; symbols starting with '88' map to sh; '#' prefix maps to ds (extended)."
+    scenarios: {}
+  R-006:
+    strength: MUST
+    statement: "ExtReader.daily/minute/fzline read extended-market data files using TdxExHqDailyBarReader."
+    scenarios: {}
+  R-007:
+    strength: MUST
+    statement: "All reader methods return None when the data file is not found."
+    scenarios: {}
